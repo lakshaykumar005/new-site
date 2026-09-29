@@ -82,6 +82,14 @@ export const musicBoxCopy = {
   hintPointer: "Drag the handle round, or pull the paper. Arrow keys work too.",
   letItPlay: "Let it play",
   stop: "Stop",
+  plate: {
+    kicker: "Fig. 2a — The plate",
+    idle: "A blank plate. Every note the box plays cuts a line into it.",
+    progress: (cut: number, total: number) => `${cut} of ${total} lines cut. Keep turning.`,
+    done: "Turns out the song knew what you look like.",
+    clear: "Clear the plate",
+    alt: `A portrait of ${HER_NAME}, engraved line by line by the music`,
+  },
   playCounts: {
     2: "Twice. It gets better the second time.",
     4: "Four times. I’m choosing to read into that.",
