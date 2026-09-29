@@ -12,9 +12,8 @@
   padding: 0 0.95rem 0 0.8rem;
   border: 1px solid var(--color-rule);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--color-paper-raised) 80%, transparent);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: color-mix(in srgb, var(--color-paper-raised) 96%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--color-paper) 60%, transparent);
   color: var(--color-ink);
   transition: border-color var(--dur-ui) var(--ease-out);
   view-transition-name: running-head;
