@@ -239,3 +239,42 @@ at build time or commit them under `assets/`).
 - Reduced motion honoured. Keyboard reachable with visible focus. Buttons have names.
 - Verify by driving the page with Playwright (chromium from `node_modules/playwright`):
   screenshot phone + desktop, click/drag the interactions, look at the screenshots, fix, repeat.
+
+## Added: her photographs and epigraphs
+
+### 7. Frontispiece — `#frontispiece` — `/lab/frontispiece` (after the title page)
+
+Scores open with an engraved portrait facing the title page. Hers is engraved **in the
+browser**: `public/photos/frontispiece-tone.png` (R = darkness, G = form) is drawn on a canvas
+as ~170 horizontal lines of ink whose width swells with darkness and bends around her
+features, plus a light cross-hatch in the deepest shadows, inside an oval vignette. It prints
+top-to-bottom once when it scrolls into view. Touch → cross-fade to the colour photograph
+(`FRONTISPIECE.photo`, same oval), touch again → back. Caption from `frontispiece` in
+copy.ts. (Built by the integrator.)
+
+### 8. Plates — `#plates` — `/lab/plates` (after Variations)
+
+`platesCopy.kicker` · `.title` · `.lede`. Then the plates from `PLATES` in
+`src/content/photos.ts`, laid out like tipped-in plates in a fine edition — never a grid or
+a wall of photos: one plate per "page" on a phone, generous margins; on desktop an
+asymmetric but calm book layout (alternate left/right placement, varying widths, captions
+beside or beneath). Each plate: the ink duotone (`duo`) inside a plate mark (the faint
+debossed rectangle an intaglio plate presses into paper: a hairline border 10–14px outside
+the image with a barely darker paper tone inside it — no drop shadows), a small `Pl. n`
+label (DM Mono), and the caption: `mark` (Bodoni italic, large) + `gloss` (DM Mono caps,
+small) + `line` (Newsreader italic). **Touch or hover a plate → the colour photograph fades
+in over the duotone** (≈700ms, `--ease-out`), like a hand-tinted print; touch again (or
+leave) → back to ink. Reduced motion: instant swap. The crescendo plate is a **pair**: two
+photos side by side (stacked on a narrow phone if needed) with each `label` beneath, and a
+real **crescendo hairpin** (two hairlines opening from a point, "<") drawn in SVG across the
+pair with *cresc.* in italic — the pair should read as one plate. Images: plain `<img>` with
+`width`/`height`, `loading="lazy"`, `decoding="async"`, `alt` from the data; never
+upscaled past their pixel width.
+
+### 9. Epigraphs — `src/components/chrome/Epigraph.tsx`
+
+`<Epigraph slot="cipher" />` renders `epigraphs[slot]` (copy.ts) between sections, or the
+plain fermata `Divider` when the slot is `null`. Set like the epigraph at the head of a
+movement: centred, `text` in Bodoni italic (~1.5–2rem, balanced), `by` beneath after an em
+dash in DM Mono caps (small, ink-soft), and `reply` (if any) beneath that in Newsreader
+(ink-soft). Hairline rules above and below, generous vertical space; `.reveal`.
