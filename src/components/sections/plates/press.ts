@@ -97,8 +97,6 @@ export interface PressEls {
   roller: Element | null;
   /** the plate's own inked face, under the sheet */
   ink: Element | null;
-  /** the number printed on the empty plate */
-  label: Element | null;
   sheet: Element;
   cover: Element;
   curl: Element;
@@ -179,12 +177,6 @@ export function runPress(els: PressEls, opts: PressOpts): PressRun {
       )
     );
   }
-  if (els.label) {
-    anims.push(
-      fill(els.label, [{ opacity: 1 }, { opacity: 0 }], { duration: 260, delay: Math.round(ROLL_MS * pA * 0.7), easing: out })
-    );
-  }
-
   // ── the sheet lies down ──
   const layAt = ROLL_MS + AFTER_ROLL_MS;
   anims.push(

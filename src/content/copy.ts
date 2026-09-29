@@ -54,7 +54,7 @@ export const titlePage = {
 };
 
 export const cipher = {
-  kicker: "Fig. 1 — The cipher",
+  kicker: "The cipher",
   title: "Your name is a tune",
   paragraphs: [
     "You are beautiful, giving, gentle, idiotically and deliciously feminine, wonderfully intelligent and wonderfully silly as well.",
@@ -70,7 +70,7 @@ export const cipher = {
 };
 
 export const musicBoxCopy = {
-  kicker: "Fig. 2 — The mechanism",
+  kicker: "The mechanism",
   title: "Go on, turn it",
   lede: "It only plays while you turn it, as fast or as slow as your hand goes. Backwards works too. Take your time with it. I did.",
   callouts: {
@@ -83,7 +83,7 @@ export const musicBoxCopy = {
   letItPlay: "Let it play",
   stop: "Stop",
   plate: {
-    kicker: "Fig. 2a — The plate",
+    kicker: "The plate",
     idle: "A blank plate. Every note you play cuts a line into it. Keep going and see who shows up.",
     progress: (cut: number, total: number) => `${cut} of ${total} lines cut. Don’t stop now.`,
     done: "Turns out the song knew your face by heart. Can’t say I blame it.",
@@ -105,7 +105,7 @@ export interface VariationCopy {
 }
 
 export const variationsCopy = {
-  kicker: "Fig. 3 — Variations",
+  kicker: "Variations",
   title: "Six moods, all\u00a0of\u00a0them\u00a0you",
   lede: "I kept playing your name in different moods to see if I’d get tired of it. I didn’t. These are the six I kept.",
   todaysPick: "Today’s pick",
@@ -152,7 +152,7 @@ export const variationsCopy = {
 };
 
 export const yourTurn = {
-  kicker: "Fig. 4 — Your turn",
+  kicker: "Your turn",
   title: "Every word is a song",
   lede: "Now you know the trick, it works on anything. Type a word and listen to it.",
   placeholder: "type a word",
@@ -309,8 +309,6 @@ export const platesCopy = {
   printAgainLabel: (mark: string) => `Print “${mark}” again`,
   /** announced when a plate has been pulled */
   printed: (n: number, mark: string) => `Plate ${n}, ${mark}, printed.`,
-  /** what the "Pl." abbreviation stands for */
-  plateWord: "Plate",
   /** appended to a print's accessible name */
   showColour: "show in colour",
   crescendo: "cresc.",

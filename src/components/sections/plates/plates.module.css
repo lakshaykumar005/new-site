@@ -1,7 +1,7 @@
 /* Plates — the print room.
    Her photographs arrive the way plates do. Each plate mark — the faint
    rectangle an intaglio plate presses into damp paper — waits empty on
-   the page with its number. As it comes into view a roller inks it, a
+   the page. As it comes into view a roller inks it, a
    sheet is laid on it and pulled off from one corner, and the print is
    left lying on the plate, a little askew, to dry. Touch the print and
    colour blooms in under the finger, the way prints were tinted by hand.
@@ -130,28 +130,6 @@
 /* the plate's face: exactly the sheet's size */
 .bed {
   position: relative;
-}
-
-/* the number printed on the empty plate */
-.plateNo {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  line-height: 1;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-graphite);
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 1;
-}
-
-.printed .plateNo,
-.clearing .plateNo {
-  opacity: 0;
 }
 
 /* the plate itself, the image cut into it in reverse; the roller inks
@@ -361,23 +339,7 @@
   text-align: center;
 }
 
-.no {
-  margin-right: -0.16em; /* the tracking after the last letter */
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  line-height: 1.4;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-ink-soft);
-}
-
-.no abbr {
-  text-decoration: none;
-  cursor: inherit;
-}
-
 .mark {
-  margin-top: 0.9rem;
   max-width: 21rem;
   font-family: var(--font-display);
   font-style: italic;

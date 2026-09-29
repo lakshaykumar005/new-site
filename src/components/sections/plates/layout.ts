@@ -40,11 +40,6 @@ export const uprightHeight = (index: number) => UPRIGHT_HEIGHTS[index % UPRIGHT_
 export const GROWTH = 1.2;
 export const growOf = (photo: PlatePhoto, i: number) => aspectOf(photo) * GROWTH ** i;
 
-/** Plates carry their own numbers, apart from the figures. */
-export function plateNumber(n: number): string {
-  return String(n);
-}
-
 /**
  * Which corner a sheet is pulled from. A single print is pulled from the
  * corner nearest its colophon. The pair is pulled so that the earlier

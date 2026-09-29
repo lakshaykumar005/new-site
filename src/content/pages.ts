@@ -5,18 +5,18 @@ export interface ScorePageInfo {
   slug: string;
   /** as printed in the contents and the page turner */
   title: string;
-  /** small label beside the title in the contents ("Fig. 1") */
+  /** small label beside the title in the contents */
   label?: string;
 }
 
 export const PAGES: readonly ScorePageInfo[] = [
   { slug: "/", title: "Title page" },
   { slug: "/frontispiece", title: "Frontispiece" },
-  { slug: "/cipher", title: "The cipher", label: "Fig. 1" },
-  { slug: "/music-box", title: "The music box", label: "Fig. 2" },
-  { slug: "/variations", title: "Variations", label: "Fig. 3" },
+  { slug: "/cipher", title: "The cipher" },
+  { slug: "/music-box", title: "The music box" },
+  { slug: "/variations", title: "Variations" },
   { slug: "/plates", title: "Plates" },
-  { slug: "/your-turn", title: "Your turn", label: "Fig. 4" },
+  { slug: "/your-turn", title: "Your turn" },
   { slug: "/coda", title: "Coda" },
 ];
 

@@ -14,7 +14,7 @@ import { platesCopy } from "@/content/copy";
 import type { Plate, PlatePhoto } from "@/content/photos";
 import { useInView, useMediaQuery, useReducedMotion } from "@/lib/hooks";
 import Hairpin from "./Hairpin";
-import { aspectOf, gripOf, growOf, kindOf, plateNumber, restOf, sideOf, uprightHeight, type PlateKind } from "./layout";
+import { aspectOf, gripOf, growOf, kindOf, restOf, sideOf, uprightHeight, type PlateKind } from "./layout";
 import { bloom, restTransform, runPress, type PressRun } from "./press";
 import Roller, { rollerSize } from "./Roller";
 import s from "./plates.module.css";
@@ -97,7 +97,7 @@ function Impression({ plate, kind, onSheet }: { plate: Plate; kind: PlateKind; o
 }
 
 /**
- * A print run. The plate mark waits empty on the page with its number;
+ * A print run. The plate mark waits empty on the page;
  * as it comes into view the roller inks it, a sheet is laid on it and
  * pulled off from one corner, and the print is left lying on the plate,
  * a little askew, to dry. Touch the print and colour blooms in from the
@@ -111,7 +111,6 @@ export default function PrintRun({ plate, index }: { plate: Plate; index: number
   const figure = useRef<HTMLElement>(null);
   const bed = useRef<HTMLDivElement>(null);
   const ink = useRef<HTMLDivElement>(null);
-  const label = useRef<HTMLSpanElement>(null);
   const sheet = useRef<HTMLButtonElement>(null);
   const print = useRef<HTMLSpanElement>(null);
   const cover = useRef<HTMLSpanElement>(null);
@@ -133,7 +132,6 @@ export default function PrintRun({ plate, index }: { plate: Plate; index: number
   const side = sideOf(index);
   const grip = gripOf(kind, side, sideBySide);
   const rest = restOf(index, grip);
-  const number = plateNumber(index + 1);
   const seen = useInView(figure, { once: true, threshold: RUN_AT, rootMargin: "0px 0px -6% 0px" });
 
   // the roller is drawn for the plate's exact size
@@ -178,7 +176,7 @@ export default function PrintRun({ plate, index }: { plate: Plate; index: number
     const bedW = bedEl.clientWidth;
     run.current?.cancel();
     run.current = runPress(
-      { roller: roller.current, ink: ink.current, label: label.current, sheet: sheetEl, cover: coverEl, curl: curlEl, edge: edgeEl },
+      { roller: roller.current, ink: ink.current, sheet: sheetEl, cover: coverEl, curl: curlEl, edge: edgeEl },
       { bedW, rollerW: rollerSize(bedW).d, grip, rest }
     );
     const ok = await run.current.done;
@@ -305,10 +303,6 @@ export default function PrintRun({ plate, index }: { plate: Plate; index: number
               <Impression plate={plate} kind={kind} onSheet={false} />
             </span>
           </div>
-          <span ref={label} className={s.plateNo} aria-hidden>
-            Pl. {number}
-          </span>
-
           {/* the sheet: the print, and the colour waiting under a touch */}
           <button
             ref={sheet}
@@ -335,9 +329,6 @@ export default function PrintRun({ plate, index }: { plate: Plate; index: number
       </div>
 
       <figcaption className={`reveal ${s.colophon}`}>
-        <p className={s.no}>
-          <abbr title={platesCopy.plateWord}>Pl.</abbr> {number}
-        </p>
         <p className={s.mark}>{plate.mark}</p>
         {plate.gloss && <p className={s.gloss}>{plate.gloss}</p>}
         <p className={s.line}>{plate.line}</p>
