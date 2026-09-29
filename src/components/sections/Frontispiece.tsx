@@ -4,183 +4,206 @@ import { useEffect, useRef, useState } from "react";
 import { frontispiece as copy } from "@/content/copy";
 import { FRONTISPIECE } from "@/content/photos";
 import { HER_NAME } from "@/content/site";
-import { useReducedMotion } from "@/lib/hooks";
-import { engrave, loadToneMap, type ToneMap } from "./frontispiece/engrave";
+import { useMediaQuery, useReducedMotion } from "@/lib/hooks";
+import { loadToneMap, type ToneMap } from "./frontispiece/engrave";
+import Glass from "./frontispiece/Glass";
+import { drawMicro, ensureFont, layoutMicro, monoFamily, type Micro } from "./frontispiece/micrograph";
 import styles from "./frontispiece/frontispiece.module.css";
 
 const ASPECT = FRONTISPIECE.toneHeight / FRONTISPIECE.toneWidth;
-const INK = "#1c1b2b";
-const PRINT_MS = 1700;
+const PRINT_MS = 1500;
 
 function lineCount(h: number) {
-  return Math.max(120, Math.min(190, Math.round(h / 2.25)));
+  return Math.max(120, Math.min(175, Math.round(h / 2.6)));
 }
 
-const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-
 /**
- * Scores open with an engraved portrait facing the title page.
- * Hers is engraved here, in the browser, from a photograph — and
- * prints itself top to bottom the first time it comes into view.
+ * Scores open with an engraved portrait facing the title page. Hers is
+ * written rather than drawn: every engraved line is a line of tiny
+ * words, printed here in the browser from a photograph. A reading glass
+ * lies on the plate so the words can be read.
  */
 export default function Frontispiece() {
-  const box = useRef<HTMLButtonElement>(null);
+  const plate = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [lines, setLines] = useState(170);
+  const [size, setSize] = useState<{ W: number; H: number } | null>(null);
+  const [micro, setMicro] = useState<Micro | null>(null);
+  const [family, setFamily] = useState("monospace");
   const [photo, setPhoto] = useState(false);
   const reduced = useReducedMotion();
+  const coarse = useMediaQuery("(pointer: coarse)");
 
+  // measure the plate
   useEffect(() => {
-    const el = box.current;
-    const cv = canvas.current;
-    if (!el || !cv) return;
-    let map: ToneMap | null = null;
-    let off: HTMLCanvasElement | null = null;
-    let printed = false;
-    let visible = false;
-    let raf = 0;
+    const el = plate.current;
+    if (!el) return;
+    let t = 0;
+    const measure = () => {
+      const W = el.clientWidth;
+      if (W > 10) setSize((s) => (s && Math.abs(s.W - W) < 1 ? s : { W, H: W * ASPECT }));
+    };
+    measure();
+    const ro = new ResizeObserver(() => {
+      window.clearTimeout(t);
+      t = window.setTimeout(measure, 120);
+    });
+    ro.observe(el);
+    return () => {
+      window.clearTimeout(t);
+      ro.disconnect();
+    };
+  }, []);
+
+  // lay the words out along the engraved lines
+  const mapRef = useRef<ToneMap | null>(null);
+  useEffect(() => {
+    if (!size) return;
     let cancelled = false;
+    (async () => {
+      const fam = monoFamily();
+      await ensureFont(fam);
+      if (!mapRef.current) mapRef.current = await loadToneMap(FRONTISPIECE.tone);
+      if (cancelled) return;
+      const m = layoutMicro(mapRef.current, size.W, size.H, {
+        lines: lineCount(size.H),
+        stream: copy.microText.join("  ·  ") + "  ·  ",
+        hidden: copy.hidden,
+        family: fam,
+      });
+      setFamily(fam);
+      setMicro(m);
+    })().catch(() => {
+      /* the plate stays blank paper; the photograph still works */
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [size]);
 
-    const drawFull = () => {
-      const ctx = cv.getContext("2d");
-      if (!ctx || !off) return;
-      ctx.clearRect(0, 0, cv.width, cv.height);
-      ctx.drawImage(off, 0, 0);
+  // print it: line by line the first time it's seen, all at once after
+  const printed = useRef(false);
+  useEffect(() => {
+    const cv = canvas.current;
+    const el = plate.current;
+    if (!cv || !el || !micro) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    cv.width = Math.round(micro.W * dpr);
+    cv.height = Math.round(micro.H * dpr);
+    const ctx = cv.getContext("2d");
+    if (!ctx) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    let raf = 0;
+    const drawAll = () => {
+      ctx.clearRect(0, 0, micro.W, micro.H);
+      drawMicro(ctx, micro, { family });
     };
 
-    const print = () => {
-      const ctx = cv.getContext("2d");
-      if (!ctx || !off) return;
-      const source = off;
-      const start = performance.now();
-      const frame = (now: number) => {
-        const p = Math.min(1, (now - start) / PRINT_MS);
-        const y = Math.round(easeInOut(p) * cv.height);
-        ctx.clearRect(0, 0, cv.width, cv.height);
-        if (y > 0) ctx.drawImage(source, 0, 0, cv.width, y, 0, 0, cv.width, y);
-        // the band still wet under the roller
-        const band = Math.round(cv.height * 0.018);
-        if (p < 1 && band > 0) {
-          ctx.globalAlpha = 0.35;
-          const h = Math.min(band, cv.height - y);
-          if (h > 0) ctx.drawImage(source, 0, y, cv.width, h, 0, y, cv.width, h);
-          ctx.globalAlpha = 1;
-        }
-        if (p < 1) raf = requestAnimationFrame(frame);
-      };
-      raf = requestAnimationFrame(frame);
-    };
-
-    const render = () => {
-      if (!map) return;
-      const w = el.clientWidth;
-      if (w < 10) return;
-      const h = w * ASPECT;
-      const dpr = Math.min(window.devicePixelRatio || 1, 3);
-      const n = lineCount(h);
-      setLines(n);
-      cv.width = Math.round(w * dpr);
-      cv.height = Math.round(h * dpr);
-      off = document.createElement("canvas");
-      off.width = cv.width;
-      off.height = cv.height;
-      const octx = off.getContext("2d");
-      if (!octx) return;
-      octx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      engrave(octx, map, w, h, { lines: n, ink: INK });
-      if (printed) {
-        drawFull();
-      } else if (visible) {
-        printed = true;
-        if (reduced) drawFull();
-        else print();
-      }
-    };
+    if (printed.current || reduced) {
+      printed.current = true;
+      drawAll();
+      return;
+    }
 
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting || printed) return;
-        visible = true;
-        if (off) {
-          printed = true;
-          if (reduced) drawFull();
-          else print();
-        }
+        if (!entry.isIntersecting || printed.current) return;
+        printed.current = true;
+        io.disconnect();
+        ctx.clearRect(0, 0, micro.W, micro.H);
+        const start = performance.now();
+        let done = 0;
+        const frame = (now: number) => {
+          const p = Math.min(1, (now - start) / PRINT_MS);
+          const upto = Math.round((1 - Math.pow(1 - p, 2)) * micro.lines);
+          if (upto > done) {
+            drawMicro(ctx, micro, { family, fromLine: done, toLine: upto });
+            done = upto;
+          }
+          if (p < 1) raf = requestAnimationFrame(frame);
+        };
+        raf = requestAnimationFrame(frame);
       },
-      { threshold: 0.25 }
+      { threshold: 0.2 }
     );
     io.observe(el);
-
-    let resizeTimer = 0;
-    const ro = new ResizeObserver(() => {
-      window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(() => {
-        cancelAnimationFrame(raf);
-        render();
-      }, 120);
-    });
-
-    loadToneMap(FRONTISPIECE.tone)
-      .then((m) => {
-        if (cancelled) return;
-        map = m;
-        render();
-        ro.observe(el);
-      })
-      .catch(() => {
-        /* the plate stays blank paper; the photograph toggle still works */
-      });
-
     return () => {
-      cancelled = true;
-      cancelAnimationFrame(raf);
-      window.clearTimeout(resizeTimer);
       io.disconnect();
-      ro.disconnect();
+      cancelAnimationFrame(raf);
     };
-  }, [reduced]);
+  }, [micro, family, reduced]);
+
+  const intro = (
+    <div className={styles.text}>
+      <p className="t-kicker reveal">{copy.kicker}</p>
+      <h2 className={`t-display reveal ${styles.title}`}>{copy.title}</h2>
+      {copy.paragraphs.map((p) => (
+        <p key={p.slice(0, 24)} className={`t-body reveal ${styles.para}`}>
+          {p}
+        </p>
+      ))}
+      <p className={`reveal ${styles.lead}`}>{copy.lead}</p>
+    </div>
+  );
 
   return (
     <section id="frontispiece" className="section" aria-labelledby="frontispiece-name">
-      <div className={`wrap ${styles.page}`}>
-        <p className="t-kicker reveal">{copy.kicker}</p>
+      <div className={`wrap ${styles.spread}`}>
+        {intro}
 
-        <div className={`${styles.plateMark} reveal`}>
-          <button
-            ref={box}
-            type="button"
-            className={`${styles.plate} ${photo ? styles.photoOn : ""}`}
-            style={{ aspectRatio: `${FRONTISPIECE.toneWidth} / ${FRONTISPIECE.toneHeight}` }}
-            onClick={() => setPhoto((v) => !v)}
-            aria-pressed={photo}
-            aria-label={photo ? copy.toggleBackLabel : copy.toggleLabel}
-          >
-            <canvas ref={canvas} className={styles.canvas} role="img" aria-label={FRONTISPIECE.alt} />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={FRONTISPIECE.photo}
-              alt={photo ? FRONTISPIECE.photoAlt : ""}
-              aria-hidden={!photo}
-              className={styles.photo}
-              loading="lazy"
-              decoding="async"
-              width={720}
-              height={889}
-            />
-            <svg className={styles.frame} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-              <ellipse cx="50" cy="50" rx="49.4" ry="49.4" fill="none" stroke="currentColor" strokeWidth="0.9" vectorEffect="non-scaling-stroke" />
-              <ellipse cx="50" cy="50" rx="48.6" ry="48.6" fill="none" stroke="currentColor" strokeWidth="0.45" vectorEffect="non-scaling-stroke" />
-            </svg>
-          </button>
-        </div>
+        <figure className={styles.figure}>
+          <div className={`${styles.plateMark} reveal`}>
+            <div
+              ref={plate}
+              className={`${styles.plate} ${photo ? styles.photoOn : ""}`}
+              style={{ aspectRatio: `${FRONTISPIECE.toneWidth} / ${FRONTISPIECE.toneHeight}` }}
+            >
+              <canvas ref={canvas} className={styles.canvas} role="img" aria-label={FRONTISPIECE.alt} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={FRONTISPIECE.photo}
+                alt={photo ? FRONTISPIECE.photoAlt : ""}
+                aria-hidden={!photo}
+                className={styles.photo}
+                loading="lazy"
+                decoding="async"
+                width={720}
+                height={889}
+              />
+              <svg className={styles.frame} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+                <ellipse cx="50" cy="50" rx="49.4" ry="49.4" fill="none" stroke="currentColor" strokeWidth="0.9" vectorEffect="non-scaling-stroke" />
+                <ellipse cx="50" cy="50" rx="48.6" ry="48.6" fill="none" stroke="currentColor" strokeWidth="0.45" vectorEffect="non-scaling-stroke" />
+              </svg>
+              {size && !photo && (
+                <Glass
+                  micro={micro}
+                  family={family}
+                  W={size.W}
+                  H={size.H}
+                  start={{ u: copy.hidden[0].u + 0.08, v: copy.hidden[0].v }}
+                  label={copy.glassLabel}
+                />
+              )}
+            </div>
+          </div>
 
-        <p id="frontispiece-name" className={`${styles.name} reveal`}>
-          {HER_NAME}
-        </p>
-        <p className={`${styles.caption} reveal`}>{photo ? copy.photoCaption : copy.caption}</p>
-        <p className={`t-caption ${styles.note} reveal`} aria-live="polite">
-          {photo ? copy.photoNote : copy.engravedNote(lines)}
-        </p>
+          <figcaption className={styles.captionBlock}>
+            <p id="frontispiece-name" className={`${styles.name} reveal`}>
+              {HER_NAME}
+            </p>
+            <p className={`${styles.caption} reveal`}>{photo ? copy.photoCaption : copy.caption}</p>
+            <p className={`t-caption ${styles.note} reveal`} aria-live="polite">
+              {photo || !micro ? " " : copy.engravedNote(micro.lines, micro.words)}
+            </p>
+          </figcaption>
+
+          <div className={`${styles.actions} reveal`}>
+            <p className={`t-caption ${styles.hint}`}>{coarse ? copy.hintTouch : copy.hintPointer}</p>
+            <button type="button" className="btn-quiet" aria-pressed={photo} onClick={() => setPhoto((v) => !v)}>
+              {photo ? copy.showEngraving : copy.showPhoto}
+            </button>
+          </div>
+        </figure>
       </div>
     </section>
   );

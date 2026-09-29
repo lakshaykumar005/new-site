@@ -1,15 +1,58 @@
-.page {
+/* ── The spread: words on one side, the plate on the other ─── */
+.spread {
+  display: grid;
+  gap: clamp(2rem, 6vw, 3rem);
+  justify-items: center;
+}
+
+@media (min-width: 1024px) {
+  .spread {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    align-items: center;
+    column-gap: clamp(3rem, 6vw, 6rem);
+  }
+  .spread > .figure {
+    order: -1;
+  }
+}
+
+.text {
+  max-width: 32rem;
+  width: 100%;
+}
+
+.title {
+  margin-top: 1.1rem;
+}
+
+.para {
+  margin-top: 1.25rem;
+}
+
+.lead {
+  margin-top: 1.6rem;
+  padding-left: 1rem;
+  border-left: 1px solid var(--color-rule);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(1.1rem, 1.6vw, 1.25rem);
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+  text-wrap: pretty;
+}
+
+.figure {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
+  width: 100%;
+  margin: 0;
 }
 
 /* The faint rectangle an intaglio plate presses into the paper. */
 .plateMark {
   position: relative;
   width: min(100%, 23rem);
-  margin-top: 2.25rem;
   padding: clamp(14px, 3.5vw, 22px);
   background: color-mix(in srgb, var(--color-paper-deep) 55%, var(--color-paper));
   box-shadow:
@@ -19,19 +62,13 @@
 
 @media (min-width: 768px) {
   .plateMark {
-    width: 30rem;
+    width: 29rem;
   }
 }
 
 .plate {
   position: relative;
-  display: block;
   width: 100%;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .canvas {
@@ -71,6 +108,83 @@
   color: var(--color-ink);
 }
 
+/* ── The reading glass ────────────────────────────────────── */
+.glass {
+  position: absolute;
+  z-index: 2;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  animation: glass-in 700ms var(--ease-out) 1.2s both;
+}
+
+@keyframes glass-in {
+  from {
+    opacity: 0;
+    transform: translate3d(10px, 14px, 0) rotate(4deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.handle {
+  position: absolute;
+  overflow: visible;
+  pointer-events: none;
+  transition: transform 420ms var(--ease-out);
+}
+
+.grip {
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+}
+.grip:active {
+  cursor: grabbing;
+}
+
+.lens {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  box-shadow:
+    0 10px 22px -8px rgba(28, 27, 43, 0.32),
+    inset 0 0 22px rgba(28, 27, 43, 0.14);
+}
+.lens:active {
+  cursor: grabbing;
+}
+.lens:focus-visible {
+  outline: 2px solid var(--color-vermillion);
+  outline-offset: 4px;
+}
+
+.lensCanvas {
+  display: block;
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ── Caption, like the lettering under an engraved portrait ── */
+.captionBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
 .name {
   margin-top: 1.9rem;
   font-family: var(--font-display);
@@ -92,14 +206,32 @@
 }
 
 .note {
-  margin-top: 0.75rem;
+  margin-top: 0.6rem;
   max-width: 22rem;
-  min-height: 2.6em;
+  min-height: 1.5em;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1.4rem;
+  text-align: center;
+}
+
+.hint {
+  max-width: 22rem;
+  color: var(--color-ink-soft);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .photo,
-  .canvas {
+  .canvas,
+  .handle {
     transition: none;
+  }
+  .glass {
+    animation: none;
   }
 }
