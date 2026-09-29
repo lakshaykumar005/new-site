@@ -1,7 +1,5 @@
+import { platesCopy } from "@/content/copy";
 import s from "./plates.module.css";
-
-/** The word a score prints where it starts to grow louder. */
-const CRESC = "cresc.";
 
 /**
  * A crescendo hairpin, as engraved under a staff: *cresc.*, then two
@@ -12,7 +10,7 @@ export default function Hairpin() {
   return (
     <span className={s.cresc} aria-hidden="true">
       <span className={s.crescWord} lang="it">
-        {CRESC}
+        {platesCopy.crescendo}
       </span>
       <svg className={s.hairpin} viewBox="0 0 100 16" preserveAspectRatio="none" focusable="false">
         <polyline

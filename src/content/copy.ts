@@ -111,6 +111,12 @@ export const variationsCopy = {
   todaysPick: "Today’s pick",
   play: "Play",
   stop: "Stop",
+  // the kaleidoscope: one dial, one staff
+  dialLabel: "The dial. Six variations — turn it to change the mood. Enter plays.",
+  hintTouch: "Turn the ring, or tap a marking. Swiping the music sideways turns it too.",
+  hintPointer: "Drag the ring round, or click a marking. ← and → turn it as well.",
+  numeral: "Var.",
+  mirror: "mirror",
   items: {
     theme: {
       mark: "Andante",
@@ -282,4 +288,21 @@ export const platesCopy = {
   lede: "Every good score comes with a few plates. These are printed in ink — touch one and the colour comes back.",
   touchHint: "Touch a plate",
   pointerHint: "Hover a plate",
+  // ── the print room ──
+  /** under the lede: how the plates arrive */
+  pressHint: "Each plate is inked and pulled as you reach it.",
+  /** the state of a plate, printed in its margin */
+  unprinted: "Not yet printed",
+  printing: "Printing…",
+  impression: (n: number) =>
+    n === 1 ? "First impression" : n === 2 ? "Second impression" : n === 3 ? "Third impression" : `Impression ${n}`,
+  printAgain: "Print again",
+  printAgainLabel: (mark: string) => `Print the plate marked ${mark} again`,
+  /** announced when a plate has been pulled */
+  printed: (n: number, mark: string) => `Plate ${n}, ${mark}, printed.`,
+  /** what the "Pl." abbreviation stands for */
+  plateWord: "Plate",
+  /** appended to a print's accessible name */
+  showColour: "show in colour",
+  crescendo: "cresc.",
 };

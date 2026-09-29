@@ -1,12 +1,13 @@
 import { platesCopy } from "@/content/copy";
 import { PLATES } from "@/content/photos";
-import Plate from "./plates/Plate";
+import PrintRun from "./plates/PrintRun";
 import s from "./plates/plates.module.css";
 
 /**
- * Plates — studies from life. Her photographs, printed in ink as the
- * plates of a fine edition: one to a page on a phone, keeping to
- * alternate margins on a wide page. Touch one and the colour returns.
+ * Plates — the print room. Her photographs arrive the way plates do:
+ * each is inked by a roller as it comes into view, a sheet is laid on
+ * it and pulled off from one corner, and the print is left lying on
+ * its plate to dry. Touch one and the colour comes back.
  */
 export default function Plates() {
   return (
@@ -19,15 +20,16 @@ export default function Plates() {
           </h2>
           <p className={`t-lede measure ${s.lede}`}>{platesCopy.lede}</p>
           <p className={`t-caption ${s.hint}`}>
-            <span className={s.hintTouch}>{platesCopy.touchHint}</span>
-            <span className={s.hintPointer}>{platesCopy.pointerHint}</span>
+            <span>{platesCopy.pressHint}</span>
+            <span className={s.hintTouch}>{platesCopy.touchHint}.</span>
+            <span className={s.hintPointer}>{platesCopy.pointerHint}.</span>
           </p>
         </header>
 
-        <ol className={s.plates}>
+        <ol className={s.runs}>
           {PLATES.map((plate, i) => (
             <li key={plate.id}>
-              <Plate plate={plate} index={i} />
+              <PrintRun plate={plate} index={i} />
             </li>
           ))}
         </ol>

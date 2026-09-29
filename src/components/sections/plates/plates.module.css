@@ -1,14 +1,19 @@
-/* Plates — "Studies from life".
-   Her photographs as the plates of a fine edition. Each is printed in
-   ink inside a plate mark — the faint rectangle an intaglio plate
-   presses into damp paper — numbered in Roman and captioned the way a
-   book captions its plates. Touch one and the colour comes back, the
-   way prints were once tinted by hand.
+/* Plates — the print room.
+   Her photographs arrive the way plates do. Each plate mark — the faint
+   rectangle an intaglio plate presses into damp paper — waits empty on
+   the page with its number. As it comes into view a roller inks it, a
+   sheet is laid on it and pulled off from one corner, and the print is
+   left lying on the plate, a little askew, to dry. Touch the print and
+   colour blooms in under the finger, the way prints were tinted by hand.
 
-   Sizes come from the photographs (set inline by Plate.tsx):
-     --px  the photograph's pixel width (a plate is never printed larger)
-     --ar  its aspect ratio, width / height
-     --hd  the height an upright plate is printed at on a wide page     */
+   Sizes come from the photographs (set inline by PrintRun.tsx):
+     --px    the photograph's pixel width (a plate is never printed larger)
+     --ar    its aspect ratio, width / height
+     --hd    the height an upright plate is printed at on a wide page
+     --rest  where the pulled print comes to rest (a slight turn)
+
+   The run is driven by the Web Animations API (press.ts); this file
+   holds the states before and after it, and the movement of the tint. */
 
 /* ── The head ───────────────────────────────────────────────────── */
 
@@ -25,19 +30,28 @@
 }
 
 .hint {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr);
+  column-gap: 0.75rem;
   margin-top: 1.5rem;
+  max-width: 30rem;
   color: var(--color-ink-soft);
+  text-wrap: pretty;
 }
 
 .hint::before {
   content: "";
-  flex: none;
+  grid-row: 1 / span 2;
+  align-self: start;
+  margin-top: 0.7em;
   width: 1.75rem;
   height: 1px;
   background: var(--color-rule);
+}
+
+.hint > span {
+  grid-column: 2;
+  text-wrap: balance;
 }
 
 .hintPointer {
@@ -53,71 +67,292 @@
   }
 }
 
-/* ── The plates ─────────────────────────────────────────────────── */
+/* ── The runs ───────────────────────────────────────────────────── */
 
-.plates {
+.runs {
   list-style: none;
-  margin: clamp(4.5rem, 13vw, 8rem) 0 0;
+  margin: clamp(4rem, 12vw, 7rem) 0 0;
   padding: 0;
   display: grid;
-  row-gap: clamp(7rem, 20vw, 10rem);
+  row-gap: clamp(6.5rem, 18vw, 9.5rem);
 }
 
-.plate {
+.run {
+  /* the plate mark's margin round the sheet, and the sheet's round the print */
   --pad: 12px;
+  --spad: 8px;
+  --edge: calc(var(--pad) + var(--spad));
   --tone: color-mix(in srgb, var(--color-paper-deep) 55%, var(--color-paper));
   --mark-line: color-mix(in srgb, var(--color-rule) 94%, var(--color-ink));
   --mark-light: color-mix(in srgb, var(--color-paper-raised) 70%, transparent);
-  /* the image's width, then the print's (image + plate margin) */
-  --w: min(var(--px), 100%);
-  --pw: min(100%, calc(var(--w) + 2 * var(--pad)));
+  --sheet-line: color-mix(in srgb, var(--color-rule) 80%, transparent);
+  /* the image's width, then the whole press (image + sheet + plate margin) */
+  --w: min(var(--px), calc(100% - 2 * var(--edge)));
+  --pw: calc(var(--w) + 2 * var(--edge));
   margin: 0;
   display: grid;
   grid-template-columns: var(--pw);
   justify-content: center;
-  row-gap: clamp(1.4rem, 4.5vw, 1.9rem);
+  row-gap: clamp(1.5rem, 4.5vw, 2rem);
 }
 
-/* One plate per page on a phone: an upright plate is held to about two
-   thirds of the screen's height, so a plate and its caption fit together. */
+/* One plate per page on a phone: an upright plate is held to about
+   three fifths of the screen's height, so plate and colophon fit together. */
 .upright {
-  --w: min(var(--px), 72vw, calc(64svh * var(--ar)));
+  --w: min(var(--px), calc(100% - 2 * var(--edge)), calc(60svh * var(--ar)));
 }
 
 .wide {
-  --w: min(var(--px), 100%, calc(70svh * var(--ar)));
+  --w: min(var(--px), calc(100% - 2 * var(--edge)), calc(70svh * var(--ar)));
 }
 
-/* The plate mark. The paper inside it is a shade deeper (plate tone);
-   its edge is a hairline with a faint highlight where the paper turns. */
-.print {
+.pair {
+  --spad: clamp(0.85rem, 3vw, 1.35rem);
+  --pw: 100%;
+}
+
+/* ── The plate mark ─────────────────────────────────────────────── */
+
+.press {
   position: relative;
-  isolation: isolate;
-  display: block;
-  width: 100%;
-  margin: 0;
   padding: var(--pad);
-  border: 0;
-  border-radius: 0;
   background: var(--tone);
   box-shadow:
     inset 0 0 0 1px var(--mark-line),
     inset 1px 1px 0 1px var(--mark-light);
+}
+
+/* a printer's corner ticks, just inside the mark */
+.ticks {
+  position: absolute;
+  inset: 4px;
+  pointer-events: none;
+  color: color-mix(in srgb, var(--color-graphite) 55%, transparent);
+}
+
+.ticks i {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border: 0 solid currentColor;
+}
+
+.ticks i:nth-child(1) {
+  top: 0;
+  left: 0;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+
+.ticks i:nth-child(2) {
+  top: 0;
+  right: 0;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+
+.ticks i:nth-child(3) {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+
+.ticks i:nth-child(4) {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+/* the plate's face: exactly the sheet's size */
+.bed {
+  position: relative;
+}
+
+/* the number printed on the empty plate */
+.plateNo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-graphite);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 1;
+}
+
+.printed .plateNo,
+.clearing .plateNo {
+  opacity: 0;
+}
+
+/* the plate itself, the image cut into it in reverse; the roller inks
+   it (clip-path, left to right) and the pull takes the ink away */
+.plateInk {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  clip-path: inset(0 100% 0 0);
+  pointer-events: none;
+}
+
+.printed .plateInk,
+.clearing .plateInk {
+  clip-path: inset(0 0 0 0);
+  opacity: 0.12;
+}
+
+.mirror {
+  display: block;
+  padding: var(--spad);
+  transform: scaleX(-1);
+}
+
+/* ── The sheet ──────────────────────────────────────────────────── */
+
+.sheet {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: var(--spad);
+  border: 0;
+  border-radius: 0;
+  background: var(--color-paper-raised);
+  box-shadow: inset 0 0 0 1px var(--sheet-line);
   color: inherit;
   font: inherit;
   text-align: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  cursor: default;
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
   user-select: none;
 }
 
-/* The image, printed onto the plate: `darken` lets the plate's own
-   paper stand in for the photograph's lightest tones, so the ink (and
-   later the colour) sits in the paper rather than on top of it.       */
+.printed .sheet {
+  opacity: 1;
+  transform: var(--rest);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* lifted away before another impression */
+.clearing .sheet {
+  opacity: 0;
+  transform: var(--rest) translateY(-10px);
+  transition:
+    opacity 220ms var(--ease-out),
+    transform 240ms var(--ease-out);
+}
+
+.sheet:focus-visible {
+  outline: 1.5px solid var(--color-vermillion);
+  outline-offset: 4px;
+}
+
+.print {
+  display: block;
+}
+
+/* the blank sheet lying on the plate: pulled away by its clip-path */
+.cover {
+  position: absolute;
+  inset: 0;
+  background: var(--color-paper-raised);
+  box-shadow: inset 0 0 0 1px var(--sheet-line);
+  clip-path: polygon(0 0, 202% 0, 0 202%);
+  pointer-events: none;
+}
+
+.printed .cover,
+.clearing .cover {
+  display: none;
+}
+
+/* the curl at the front of the pull: the sheet's underside in shade,
+   and a hairline where it turns */
+.curl,
+.curlEdge {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 0, 0 0, 0 0);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.curl {
+  background: color-mix(in srgb, var(--color-paper-deep) 90%, var(--color-ink));
+}
+
+.curlEdge {
+  background: color-mix(in srgb, var(--color-ink) 42%, var(--color-paper-deep));
+}
+
+.printing .curl,
+.printing .curlEdge {
+  visibility: visible;
+}
+
+/* ── The roller ─────────────────────────────────────────────────── */
+
+.roller {
+  position: absolute;
+  overflow: visible;
+  opacity: 0;
+  pointer-events: none;
+  color: var(--color-ink);
+  will-change: transform, opacity;
+}
+
+.rollerRubber {
+  fill: color-mix(in srgb, var(--color-ink) 16%, var(--color-paper-deep));
+}
+
+.rollerHatch {
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-ink) 72%, var(--color-paper));
+  stroke-width: 0.55;
+}
+
+.rollerLine {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.9;
+  stroke-linejoin: round;
+}
+
+.rollerHair {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.5;
+}
+
+.rollerPart {
+  fill: var(--color-paper-raised);
+}
+
+.rollerFerrule {
+  fill: var(--color-paper-deep);
+}
+
+.rollerInk {
+  fill: currentColor;
+}
+
+/* ── The print, and its colour ──────────────────────────────────── */
+
 .frame {
   position: relative;
   display: block;
-  mix-blend-mode: darken;
 }
 
 .frame img {
@@ -128,33 +363,36 @@
   -webkit-touch-callout: none;
 }
 
-/* The colour photograph, waiting over the ink. It arrives a little
-   muted and deepens as it settles, the way a tint is laid on a print. */
+/* The colour photograph, waiting over the ink. It arrives through a
+   soft round mask that grows from wherever the print was touched
+   (press.ts sets the mask's size and place), and leaves by fading. */
 .tint {
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity 700ms var(--ease-out);
+  -webkit-mask-image: radial-gradient(circle closest-side, #000 46%, transparent 100%);
+  mask-image: radial-gradient(circle closest-side, #000 46%, transparent 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 0 0;
+  mask-size: 0 0;
+  transition: opacity 360ms var(--ease-out);
+  pointer-events: none;
 }
 
 .tint img {
   height: 100%;
   object-fit: cover;
-  filter: saturate(0.45);
-  transition: filter 1100ms var(--ease-in-out);
 }
 
-.print[aria-pressed="true"] .tint {
+.sheet[aria-pressed="true"] .tint {
   opacity: 1;
+  transition-duration: 160ms;
 }
 
-.print[aria-pressed="true"] .tint img {
-  filter: none;
-}
+/* ── The colophon ───────────────────────────────────────────────── */
 
-/* ── Captions ───────────────────────────────────────────────────── */
-
-.caption {
+.colophon {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -210,32 +448,66 @@
   text-wrap: balance;
 }
 
-/* ── The crescendo: a pair printed as one plate ─────────────────── */
-
-.pair {
-  --pad: 14px;
-  --pw: 100%;
-}
-
-.pairRow {
+/* the state of the plate, and another impression */
+.state {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.impression {
+  margin-right: -0.16em;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  line-height: 1.4;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-graphite);
+  transition: color var(--dur-ui) var(--ease-out);
+}
+
+.printed .impression {
+  color: var(--color-ink-soft);
+}
+
+.again {
+  min-height: 36px;
+  padding: 0 0.85rem;
+  font-size: 0.66rem;
+  transition:
+    opacity var(--dur-ui) var(--ease-out),
+    border-color var(--dur-ui) var(--ease-out),
+    transform var(--dur-micro) var(--ease-out);
+}
+
+.again[aria-disabled="true"] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ── The crescendo: a pair printed as one long pull ─────────────── */
+
+.pairRow {
+  display: grid;
   gap: 1.6rem;
 }
 
 /* On a phone the pair is stacked and stepped, each a size larger. */
 .pairItem {
   display: block;
-  width: calc(var(--grow) / var(--grow-max) * 82%);
+  width: calc(var(--grow) / var(--grow-max) * 84%);
   max-width: var(--px);
 }
 
 .pairItem:nth-child(odd) {
-  align-self: flex-start;
+  justify-self: start;
 }
 
 .pairItem:nth-child(even) {
-  align-self: flex-end;
+  justify-self: end;
   text-align: right;
 }
 
@@ -251,17 +523,11 @@
   color: var(--color-ink-soft);
 }
 
-/* each photograph takes its colour a beat after the one before */
-.print[aria-pressed="true"] .pairItem + .pairItem .tint,
-.print[aria-pressed="true"] .pairItem + .pairItem .tint img {
-  transition-delay: 240ms;
-}
-
 .cresc {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  margin-top: 1.75rem;
+  margin-top: 1.5rem;
   color: var(--color-ink);
 }
 
@@ -284,149 +550,125 @@
   overflow: visible;
 }
 
-/* ── A tablet: larger plates, still one to a page ───────────────── */
+/* ── A tablet: larger plates, the pair side by side ─────────────── */
 
-@media (min-width: 560px) {
+@media (min-width: 640px) {
   .upright {
-    --w: min(var(--px), 52vw, calc(min(36rem, 70svh) * var(--ar)));
+    --w: min(var(--px), calc(100% - 2 * var(--edge)), 52vw, calc(min(36rem, 70svh) * var(--ar)));
   }
 
   .pair {
-    --pw: min(100%, 44rem, 150svh);
+    --pw: min(100%, 44rem);
   }
 
   .pairRow {
-    flex-direction: row;
+    display: flex;
     align-items: flex-end;
-    gap: clamp(1.25rem, 3vw, 2.5rem);
+    gap: clamp(1.25rem, 3vw, 2.25rem);
   }
 
   .pairItem,
   .pairItem:nth-child(odd),
   .pairItem:nth-child(even) {
     flex: var(--grow) 1 0;
-    align-self: auto;
     width: auto;
     min-width: 0;
     text-align: left;
   }
 }
 
-/* ── A wide page: plates keep to alternate margins, captions face in ─ */
+/* ── A wide page: prints keep to alternate margins, colophons face in ─ */
 
 @media (min-width: 900px) {
-  .plate {
+  .run {
     --pad: 14px;
+    --spad: 10px;
+    column-gap: clamp(3rem, 6vw, 5.5rem);
   }
 
-  .upright,
-  .wide {
-    padding-inline: clamp(0rem, 7vw, 6rem);
+  .pair {
+    --spad: 1.4rem;
+  }
+
+  .upright {
+    padding-inline: clamp(0rem, 6vw, 5rem);
   }
 
   /* printed at its page height — or less, on a short screen, so the
      whole plate is always seen at once */
   .upright {
-    --w: min(var(--px), calc(min(var(--hd), 76svh) * var(--ar)));
-    align-items: end;
-    column-gap: clamp(3.5rem, 7vw, 6.5rem);
+    --w: min(var(--px), calc(min(var(--hd), 74svh) * var(--ar)));
   }
 
-  .upright.left {
+  .wide {
+    --w: min(var(--px), 37rem, calc(66svh * var(--ar)));
+    padding-inline: clamp(0rem, 3vw, 2.5rem);
+  }
+
+  .pair {
+    --pw: min(100%, 43rem);
+  }
+
+  .left {
     grid-template-columns: var(--pw) minmax(0, 19rem);
     justify-content: start;
+    align-items: end;
   }
 
-  .upright.right {
+  .right {
     grid-template-columns: minmax(0, 19rem) var(--pw);
     justify-content: end;
+    align-items: start;
   }
 
-  .upright.right .print {
+  .right .press {
     order: 2;
   }
 
-  /* the plate's number at the head of the page, its caption at the foot */
-  .upright .caption {
-    align-self: stretch;
+  .pair.left,
+  .pair.right {
+    justify-content: space-between;
+  }
+
+  .colophon {
     align-items: flex-start;
     text-align: left;
-    padding-block: 0.1rem 0.2rem;
+    padding-block: 0.15rem;
   }
 
-  .upright .no {
-    margin-bottom: auto;
-  }
-
-  .upright.right .caption {
+  .right .colophon {
     align-items: flex-end;
     text-align: right;
   }
 
-  .wide {
-    --w: min(var(--px), 45rem, calc(72svh * var(--ar)));
+  .state {
+    align-items: inherit;
   }
 
-  .wide.left {
-    justify-content: start;
-  }
-
-  .wide.right {
-    justify-content: end;
-  }
-
-  .pair {
-    --pw: min(100%, 58rem, 150svh);
-  }
-
-  /* under a wide plate the caption runs in two columns, like a label */
-  .wide .caption,
-  .pair .caption {
-    display: grid;
-    grid-template-columns: max-content minmax(0, 24rem);
-    grid-template-areas:
-      "no    ."
-      "mark  line"
-      "gloss line";
-    justify-content: start;
-    align-items: start;
-    column-gap: clamp(2.5rem, 5vw, 4.5rem);
-    text-align: left;
-  }
-
-  .wide .no,
-  .pair .no {
-    grid-area: no;
-  }
-
-  .wide .mark,
-  .pair .mark {
-    grid-area: mark;
-  }
-
-  .wide .gloss,
-  .pair .gloss {
-    grid-area: gloss;
-  }
-
-  .wide .line,
-  .pair .line {
-    grid-area: line;
-    max-width: none;
-    margin-top: 0.9rem;
+  .line {
+    max-width: 19rem;
   }
 }
 
-/* Reduced motion: the colour is simply there, or not. */
+/* ── Reduced motion: the print is simply there, or not ──────────── */
+
 @media (prefers-reduced-motion: reduce) {
-  .tint,
-  .tint img,
-  .print[aria-pressed="true"] .pairItem + .pairItem .tint,
-  .print[aria-pressed="true"] .pairItem + .pairItem .tint img {
-    transition: none;
+  .sheet {
+    transition: opacity 400ms linear;
   }
 
-  .tint img {
-    filter: none;
+  .clearing .sheet {
+    transition-duration: 200ms;
+  }
+
+  .tint {
+    transition: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .impression,
+  .again {
+    transition: none;
   }
 }
