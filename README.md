@@ -25,7 +25,7 @@ The running head at the top left opens the contents.
 | 3 | **The cipher** *(Fig. 1)* | `/cipher` | The composers' trick (Schumann's Op. 1 was variations on a name). A tappable cipher table that can spell her name out loud. |
 | 4 | **The music box** *(Fig. 2)* | `/music-box` | A patent-drawing music box. Turn the handle or pull the paper — it plays at the speed of her hand, backwards too. Beside it an engraver's plate: every note cuts the next lines of her portrait into it (the strip's rows are the portrait's bands), until, after two passes of the song, she's there. |
 | 5 | **Variations** *(Fig. 3)* | `/variations` | A page of printed music: the theme, crab-wise, upside down, as a waltz, as a 2 a.m. lullaby, and allegro. Each one plays. |
-| 6 | **Plates** | `/plates` | Her photographs as plates in a fine edition, printed in ink; touch one and the colour comes back. Captioned in musical markings — the College Day pair carries a crescendo. |
+| 6 | **Plates** | `/plates` | Three of her photographs as plates in a fine edition, printed in ink; touch one and the colour comes back. Captioned in musical markings: *Scherzando*, *Dolce*, *Notturno*. |
 | 7 | **Your turn** *(Fig. 4)* | `/your-turn` | Any word becomes a song as she types it. "Send it back" shares a link that hides the word until it's played. |
 | 8 | **Coda** | `/coda` | A short note from you, and the last bar: *Fine.* |
 | | **A song arrived** | `/s` | Where a sent word lands: press play, and the letters appear under the notes as they sound. |

@@ -70,33 +70,4 @@ export const PLATES: Plate[] = [
     line: "Music meant for after dark. Chopin wrote a whole book of them; this one needs no piano.",
     photos: [p("notturno", 620, 897, "Pavithraa at night in a white T-shirt and jeans, looking to one side")],
   },
-  {
-    id: "tutti",
-    mark: "Tutti",
-    gloss: "everyone plays",
-    line: "The whole orchestra, all at once — and somehow you’re still the melody.",
-    photos: [p("tutti", 1100, 716, "Pavithraa in a beach selfie with a group of friends")],
-  },
-  {
-    id: "crescendo",
-    mark: "Crescendo",
-    gloss: "growing louder",
-    line: "One year, then the next — a little louder each time. Composers have a sign for that. It opens as it goes.",
-    photos: [
-      p(
-        "crescendo-2025",
-        770,
-        700,
-        "Pavithraa receiving the K S Girl Achiever Award on stage at College Day 2025",
-        "College Day, 2025"
-      ),
-      p(
-        "crescendo-2026",
-        580,
-        600,
-        "Pavithraa receiving the MSP Award of Excellence on stage at College Day 2026",
-        "College Day, 2026"
-      ),
-    ],
-  },
 ];

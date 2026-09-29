@@ -333,8 +333,8 @@ keys only.
   rotated (±1.5°) like a print left to dry, with a small "Pl. n" and the caption beneath.
   Touch / hover the print → colour blooms in from the touch point (a radial `mask-image`
   growing from the pointer position, 700ms) — hand-tinting; touch again → back to ink.
-- **The crescendo pair** is one long pull: two prints on one wide sheet, the hairpin drawn
-  between them as the pull passes it, `cresc.` in italic.
+- Three plates only (Scherzando, Dolce, Notturno) — the user removed the Tutti and
+  Crescendo plates; there is no pair any more.
 - Between print runs, small marginalia: the plate number, the marking (`mark`, Bodoni
   italic, large), the gloss (DM Mono caps) and `line` (Newsreader italic) — laid out as a
   colophon beside the print on desktop, beneath it on phone.
