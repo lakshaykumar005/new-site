@@ -8,11 +8,18 @@ import Divider from "./Divider";
  * small beneath, and an answer if there is one. An empty slot is just
  * a pause — the fermata divider.
  */
-export default function Epigraph({ slot }: { slot: keyof typeof epigraphs }) {
+export default function Epigraph({
+  slot,
+  atHead = false,
+}: {
+  slot: keyof typeof epigraphs;
+  /** printed at the top of a page: leave no trace when the slot is empty */
+  atHead?: boolean;
+}) {
   const q = epigraphs[slot];
-  if (!q) return <Divider />;
+  if (!q) return atHead ? null : <Divider />;
   return (
-    <div className={`wrap ${s.epigraph}`}>
+    <div className={`wrap ${s.epigraph} ${atHead ? s.atHead : ""}`}>
       <div className={`reveal ${s.inner}`}>
         <figure className={s.figure}>
           <blockquote className={s.text}>

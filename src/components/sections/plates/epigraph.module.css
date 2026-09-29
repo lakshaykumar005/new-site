@@ -6,6 +6,14 @@
   padding-block: clamp(1.5rem, 5vw, 3rem);
 }
 
+/* at the head of a page: clear of the running head, and the
+   section below loses nothing of its own opening space */
+.atHead {
+  padding-top: clamp(5.5rem, 16vw, 8.5rem);
+  padding-bottom: 0;
+  margin-bottom: clamp(-3.5rem, -8vw, -2rem);
+}
+
 .inner {
   display: flex;
   flex-direction: column;
