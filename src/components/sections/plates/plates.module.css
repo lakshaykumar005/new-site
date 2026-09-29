@@ -1,0 +1,432 @@
+/* Plates — "Studies from life".
+   Her photographs as the plates of a fine edition. Each is printed in
+   ink inside a plate mark — the faint rectangle an intaglio plate
+   presses into damp paper — numbered in Roman and captioned the way a
+   book captions its plates. Touch one and the colour comes back, the
+   way prints were once tinted by hand.
+
+   Sizes come from the photographs (set inline by Plate.tsx):
+     --px  the photograph's pixel width (a plate is never printed larger)
+     --ar  its aspect ratio, width / height
+     --hd  the height an upright plate is printed at on a wide page     */
+
+/* ── The head ───────────────────────────────────────────────────── */
+
+.head {
+  max-width: 46rem;
+}
+
+.title {
+  margin-top: 1rem;
+}
+
+.lede {
+  margin-top: 1.25rem;
+}
+
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  color: var(--color-ink-soft);
+}
+
+.hint::before {
+  content: "";
+  flex: none;
+  width: 1.75rem;
+  height: 1px;
+  background: var(--color-rule);
+}
+
+.hintPointer {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hintTouch {
+    display: none;
+  }
+  .hintPointer {
+    display: inline;
+  }
+}
+
+/* ── The plates ─────────────────────────────────────────────────── */
+
+.plates {
+  list-style: none;
+  margin: clamp(4.5rem, 13vw, 8rem) 0 0;
+  padding: 0;
+  display: grid;
+  row-gap: clamp(7rem, 20vw, 10rem);
+}
+
+.plate {
+  --pad: 12px;
+  --tone: color-mix(in srgb, var(--color-paper-deep) 55%, var(--color-paper));
+  --mark-line: color-mix(in srgb, var(--color-rule) 94%, var(--color-ink));
+  --mark-light: color-mix(in srgb, var(--color-paper-raised) 70%, transparent);
+  /* the image's width, then the print's (image + plate margin) */
+  --w: min(var(--px), 100%);
+  --pw: min(100%, calc(var(--w) + 2 * var(--pad)));
+  margin: 0;
+  display: grid;
+  grid-template-columns: var(--pw);
+  justify-content: center;
+  row-gap: clamp(1.4rem, 4.5vw, 1.9rem);
+}
+
+/* One plate per page on a phone: an upright plate is held to about two
+   thirds of the screen's height, so a plate and its caption fit together. */
+.upright {
+  --w: min(var(--px), 72vw, calc(64svh * var(--ar)));
+}
+
+.wide {
+  --w: min(var(--px), 100%, calc(70svh * var(--ar)));
+}
+
+/* The plate mark. The paper inside it is a shade deeper (plate tone);
+   its edge is a hairline with a faint highlight where the paper turns. */
+.print {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: var(--pad);
+  border: 0;
+  border-radius: 0;
+  background: var(--tone);
+  box-shadow:
+    inset 0 0 0 1px var(--mark-line),
+    inset 1px 1px 0 1px var(--mark-light);
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* The image, printed onto the plate: `darken` lets the plate's own
+   paper stand in for the photograph's lightest tones, so the ink (and
+   later the colour) sits in the paper rather than on top of it.       */
+.frame {
+  position: relative;
+  display: block;
+  mix-blend-mode: darken;
+}
+
+.frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  -webkit-touch-callout: none;
+}
+
+/* The colour photograph, waiting over the ink. It arrives a little
+   muted and deepens as it settles, the way a tint is laid on a print. */
+.tint {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 700ms var(--ease-out);
+}
+
+.tint img {
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.45);
+  transition: filter 1100ms var(--ease-in-out);
+}
+
+.print[aria-pressed="true"] .tint {
+  opacity: 1;
+}
+
+.print[aria-pressed="true"] .tint img {
+  filter: none;
+}
+
+/* ── Captions ───────────────────────────────────────────────────── */
+
+.caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.no {
+  margin-right: -0.16em; /* the tracking after the last letter */
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1.4;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+.no abbr {
+  text-decoration: none;
+  cursor: inherit;
+}
+
+.mark {
+  margin-top: 0.9rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 450;
+  font-variation-settings: "opsz" 60;
+  font-size: clamp(2.2rem, 3.2vw, 2.7rem);
+  line-height: 1;
+  letter-spacing: -0.005em;
+  color: var(--color-ink);
+}
+
+.gloss {
+  margin-top: 0.8rem;
+  margin-right: -0.2em;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.4;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+.line {
+  margin-top: 1.05rem;
+  max-width: 21rem;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(1.04rem, 1.2vw, 1.12rem);
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+  text-wrap: balance;
+}
+
+/* ── The crescendo: a pair printed as one plate ─────────────────── */
+
+.pair {
+  --pad: 14px;
+  --pw: 100%;
+}
+
+.pairRow {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+/* On a phone the pair is stacked and stepped, each a size larger. */
+.pairItem {
+  display: block;
+  width: calc(var(--grow) / var(--grow-max) * 82%);
+  max-width: var(--px);
+}
+
+.pairItem:nth-child(odd) {
+  align-self: flex-start;
+}
+
+.pairItem:nth-child(even) {
+  align-self: flex-end;
+  text-align: right;
+}
+
+.label {
+  display: block;
+  margin-top: 0.7rem;
+  margin-right: -0.16em;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  line-height: 1.4;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+/* each photograph takes its colour a beat after the one before */
+.print[aria-pressed="true"] .pairItem + .pairItem .tint,
+.print[aria-pressed="true"] .pairItem + .pairItem .tint img {
+  transition-delay: 240ms;
+}
+
+.cresc {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.75rem;
+  color: var(--color-ink);
+}
+
+.crescWord {
+  flex: none;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "opsz" 18;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding-bottom: 0.12em;
+}
+
+.hairpin {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 16px;
+  overflow: visible;
+}
+
+/* ── A tablet: larger plates, still one to a page ───────────────── */
+
+@media (min-width: 560px) {
+  .upright {
+    --w: min(var(--px), 52vw, calc(min(36rem, 70svh) * var(--ar)));
+  }
+
+  .pair {
+    --pw: min(100%, 44rem, 150svh);
+  }
+
+  .pairRow {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+  }
+
+  .pairItem,
+  .pairItem:nth-child(odd),
+  .pairItem:nth-child(even) {
+    flex: var(--grow) 1 0;
+    align-self: auto;
+    width: auto;
+    min-width: 0;
+    text-align: left;
+  }
+}
+
+/* ── A wide page: plates keep to alternate margins, captions face in ─ */
+
+@media (min-width: 900px) {
+  .plate {
+    --pad: 14px;
+  }
+
+  .upright,
+  .wide {
+    padding-inline: clamp(0rem, 7vw, 6rem);
+  }
+
+  /* printed at its page height — or less, on a short screen, so the
+     whole plate is always seen at once */
+  .upright {
+    --w: min(var(--px), calc(min(var(--hd), 76svh) * var(--ar)));
+    align-items: end;
+    column-gap: clamp(3.5rem, 7vw, 6.5rem);
+  }
+
+  .upright.left {
+    grid-template-columns: var(--pw) minmax(0, 19rem);
+    justify-content: start;
+  }
+
+  .upright.right {
+    grid-template-columns: minmax(0, 19rem) var(--pw);
+    justify-content: end;
+  }
+
+  .upright.right .print {
+    order: 2;
+  }
+
+  /* the plate's number at the head of the page, its caption at the foot */
+  .upright .caption {
+    align-self: stretch;
+    align-items: flex-start;
+    text-align: left;
+    padding-block: 0.1rem 0.2rem;
+  }
+
+  .upright .no {
+    margin-bottom: auto;
+  }
+
+  .upright.right .caption {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .wide {
+    --w: min(var(--px), 45rem, calc(72svh * var(--ar)));
+  }
+
+  .wide.left {
+    justify-content: start;
+  }
+
+  .wide.right {
+    justify-content: end;
+  }
+
+  .pair {
+    --pw: min(100%, 58rem, 150svh);
+  }
+
+  /* under a wide plate the caption runs in two columns, like a label */
+  .wide .caption,
+  .pair .caption {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 24rem);
+    grid-template-areas:
+      "no    ."
+      "mark  line"
+      "gloss line";
+    justify-content: start;
+    align-items: start;
+    column-gap: clamp(2.5rem, 5vw, 4.5rem);
+    text-align: left;
+  }
+
+  .wide .no,
+  .pair .no {
+    grid-area: no;
+  }
+
+  .wide .mark,
+  .pair .mark {
+    grid-area: mark;
+  }
+
+  .wide .gloss,
+  .pair .gloss {
+    grid-area: gloss;
+  }
+
+  .wide .line,
+  .pair .line {
+    grid-area: line;
+    max-width: none;
+    margin-top: 0.9rem;
+  }
+}
+
+/* Reduced motion: the colour is simply there, or not. */
+@media (prefers-reduced-motion: reduce) {
+  .tint,
+  .tint img,
+  .print[aria-pressed="true"] .pairItem + .pairItem .tint,
+  .print[aria-pressed="true"] .pairItem + .pairItem .tint img {
+    transition: none;
+  }
+
+  .tint img {
+    filter: none;
+  }
+}
