@@ -8,21 +8,30 @@ melody. This site plays it, shows the trick, lets her turn it on a paper music b
 plays it six different ways, lets her turn any word into a song and send it back,
 and ends, as scores do, on *Fine*.
 
-No samples, no photos, no video: the music box is synthesized in the browser, the
-notation is engraved in code, and everything is computed from one line in
-`src/content/site.ts`.
+No samples and no video: the music box is synthesized in the browser, the
+notation is engraved in code, her portrait is engraved from a photograph on a
+canvas, and the music is computed from one line in `src/content/site.ts`.
 
-## On the page
+## The pages
 
-| | Section | What happens |
-| --- | --- | --- |
-| | **Title page** | Her name set like a published score. One tap: each letter drops a note onto the staff and plays it, then the whole theme plays with its harmony. |
-| Fig. 1 | **The cipher** | The composers' trick (Schumann's Op. 1 was variations on a name). A tappable cipher table that can spell her name out loud. |
-| Fig. 2 | **The mechanism** | A patent-drawing music box. Turn the handle or pull the paper — it plays at the speed of her hand, backwards too. |
-| Fig. 3 | **Variations** | A page of printed music: the theme, crab-wise, upside down, as a waltz, as a 2 a.m. lullaby, and allegro. Each one plays. |
-| Fig. 4 | **Your turn** | Any word becomes a song as she types it. "Send it back" shares a link that hides the word until it's played. |
-| | **Coda** | A short note from you, and the last bar: *Fine.* |
-| `/s` | **A song arrived** | Where a sent word lands: press play, and the letters appear under the notes as they sound. |
+A score is a book, so the site is one too: eight pages, turned with the page
+turner at the foot of each, a sideways swipe on a phone, or ← / → on a keyboard.
+The running head at the top left opens the contents.
+
+| p. | Page | Route | What happens |
+| --- | --- | --- | --- |
+| 1 | **Title page** | `/` | Her name set like a published score. One tap: each letter drops a note onto the staff and plays it, then the whole theme plays with its harmony. |
+| 2 | **Frontispiece** | `/frontispiece` | Her portrait, engraved in the browser in ~170 lines of ink from a photograph; it prints itself top to bottom. Touch it for the photograph. |
+| 3 | **The cipher** *(Fig. 1)* | `/cipher` | The composers' trick (Schumann's Op. 1 was variations on a name). A tappable cipher table that can spell her name out loud. |
+| 4 | **The music box** *(Fig. 2)* | `/music-box` | A patent-drawing music box. Turn the handle or pull the paper — it plays at the speed of her hand, backwards too. |
+| 5 | **Variations** *(Fig. 3)* | `/variations` | A page of printed music: the theme, crab-wise, upside down, as a waltz, as a 2 a.m. lullaby, and allegro. Each one plays. |
+| 6 | **Plates** | `/plates` | Her photographs as plates in a fine edition, printed in ink; touch one and the colour comes back. Captioned in musical markings — the College Day pair carries a crescendo. |
+| 7 | **Your turn** *(Fig. 4)* | `/your-turn` | Any word becomes a song as she types it. "Send it back" shares a link that hides the word until it's played. |
+| 8 | **Coda** | `/coda` | A short note from you, and the last bar: *Fine.* |
+| | **A song arrived** | `/s` | Where a sent word lands: press play, and the letters appear under the notes as they sound. |
+
+Quotations of your own go at the head of pages 3–8 — see `epigraphs` in
+`src/content/copy.ts`.
 
 ## Run it
 
@@ -48,10 +57,10 @@ pnpm build && pnpm start --port 3100 &
 BASE_URL=http://localhost:3100 pnpm test:e2e
 ```
 
-Drives every section in a real browser at phone and desktop sizes — plays the name,
-spells the cipher, cranks the music box, plays the variations, types and sends a word,
-opens it on the `/s` page, reaches *Fine* — and fails on console errors or horizontal
-overflow. Screenshots land in `e2e-shots/`.
+Reads the whole score in a real browser at phone and desktop sizes — plays the name,
+turns every page, opens the contents, taps the cipher, cranks the music box, plays a
+variation, tints a plate, types a word, opens it on `/s`, reaches *Fine* — and fails on
+console errors or horizontal overflow. Screenshots land in `e2e-shots/`.
 
 ## Deploy
 
