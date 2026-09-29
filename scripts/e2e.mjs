@@ -150,9 +150,14 @@ async function run(tag, contextOptions) {
   await open(page, "/plates");
   const firstPlate = page.locator("#plates figure button").first();
   await firstPlate.scrollIntoViewIfNeeded();
-  await firstPlate.click();
+  // a finger taps; a mouse only has to hover
+  if (contextOptions.hasTouch) await firstPlate.tap();
+  else await firstPlate.hover();
   await page.waitForTimeout(1000);
-  check((await firstPlate.getAttribute("aria-pressed")) === "true", `${tag} plates: touch brings the colour back`);
+  check(
+    (await firstPlate.getAttribute("aria-pressed")) === "true",
+    `${tag} plates: ${contextOptions.hasTouch ? "a tap" : "hovering"} brings the colour back`
+  );
   await shot(page, `${tag}-08-plate-tinted`);
 
   // ── 7. your turn ────────────────────────────────────────
@@ -207,10 +212,12 @@ async function run(tag, contextOptions) {
   await open(page, "/s#not-a-real-code");
   check(await page.getByText(/scrambled/i).isVisible(), `${tag} /s: a broken link is handled`);
 
-  // ── 404 ─────────────────────────────────────────────────
-  const res = await page.goto(`${BASE}/no-such-page`, { waitUntil: "networkidle" });
+  // ── 404 (a fresh tab: the browser logs the deliberate miss) ─
+  const lost = await context.newPage();
+  const res = await lost.goto(`${BASE}/no-such-page`, { waitUntil: "networkidle" });
   check(res?.status() === 404, `${tag} 404: status is 404`);
-  await shot(page, `${tag}-13-not-found`);
+  check(await lost.getByRole("link").first().isVisible(), `${tag} 404: offers a way back`);
+  await shot(lost, `${tag}-13-not-found`);
 
   await browser.close();
 }
