@@ -32,12 +32,21 @@ export default function RevealObserver() {
       });
     };
 
+    // a keyboard can reach a control before its block has scrolled far enough in
+    const onFocus = (e: FocusEvent) => {
+      for (let n = e.target as Element | null; n; n = n.parentElement) {
+        if (n.classList?.contains("reveal")) n.classList.add("is-visible");
+      }
+    };
+
     scan();
     const mo = new MutationObserver(scan);
     mo.observe(document.body, { childList: true, subtree: true });
+    document.addEventListener("focusin", onFocus);
     return () => {
       io.disconnect();
       mo.disconnect();
+      document.removeEventListener("focusin", onFocus);
     };
   }, [pathname]);
 
