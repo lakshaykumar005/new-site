@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Variations on a Name
 
-## Getting Started
+A small piece of music, transcribed from a name.
 
-First, run the development server:
+Her name, run through the old composers' cipher — the first seven letters of the
+alphabet are already notes, and after G you start again at A — turns out to be a
+melody. This site plays it, shows the trick, lets her turn it on a paper music box,
+plays it six different ways, lets her turn any word into a song and send it back,
+and ends, as scores do, on *Fine*.
+
+No samples, no photos, no video: the music box is synthesized in the browser, the
+notation is engraved in code, and everything is computed from one line in
+`src/content/site.ts`.
+
+## On the page
+
+| | Section | What happens |
+| --- | --- | --- |
+| | **Title page** | Her name set like a published score. One tap: each letter drops a note onto the staff and plays it, then the whole theme plays with its harmony. |
+| Fig. 1 | **The cipher** | The composers' trick (Schumann's Op. 1 was variations on a name). A tappable cipher table that can spell her name out loud. |
+| Fig. 2 | **The mechanism** | A patent-drawing music box. Turn the handle or pull the paper — it plays at the speed of her hand, backwards too. |
+| Fig. 3 | **Variations** | A page of printed music: the theme, crab-wise, upside down, as a waltz, as a 2 a.m. lullaby, and allegro. Each one plays. |
+| Fig. 4 | **Your turn** | Any word becomes a song as she types it. "Send it back" shares a link that hides the word until it's played. |
+| | **Coda** | A short note from you, and the last bar: *Fine.* |
+| `/s` | **A song arrived** | Where a sent word lands: press play, and the letters appear under the notes as they sound. |
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev          # http://localhost:3000 (add --port 3100 if 3000 is busy)
+pnpm build        # production build — every route prerenders static
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+On a phone on the same Wi-Fi, open the "Network" address `next dev` prints
+(add your LAN IP to `allowedDevOrigins` in `next.config.ts` if it differs).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Make it yours
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+See [CUSTOMIZE.md](CUSTOMIZE.md) — a five-minute checklist. Everything personal is in
+`src/content/`; no component edits needed.
 
-## Learn More
+## Test it
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm exec playwright install chromium     # once
+pnpm build && pnpm start --port 3100 &
+BASE_URL=http://localhost:3100 pnpm test:e2e
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Drives every section in a real browser at phone and desktop sizes — plays the name,
+spells the cipher, cranks the music box, plays the variations, types and sends a word,
+opens it on the `/s` page, reaches *Fine* — and fails on console errors or horizontal
+overflow. Screenshots land in `e2e-shots/`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deploy
 
-## Deploy on Vercel
+Push to GitHub and import the repo on [Vercel](https://vercel.com) — no settings, no
+environment variables, no database. The site is static and tagged `noindex`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## How it's made
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Next.js 16** (App Router, Turbopack), **React 19**, **Tailwind CSS 4**, TypeScript.
+- **Sound**: a WebAudio music box — each note is a struck steel tine (a sine fundamental,
+  a slightly sharp octave, and the tine's inharmonic overtone at ~6.27×), the click of the
+  pin, a warm lowpass and a generated room. iOS audio session set to `playback`, so the
+  ringer switch doesn't silence it. Nothing plays until she touches something.
+- **Music**: `src/lib/music/` — the cipher, white-key pitch arithmetic, and a little
+  composer that gives any word a lilting 3/4 rhythm, harmonises every bar with the chord
+  that fits it best and cadences home; plus retrograde, inversion, waltz, lullaby and
+  allegro variations.
+- **Notation**: `src/components/notation/` — a real engraving layout (duration-weighted
+  spacing, stem direction, flags, dots, ledger lines, barlines) using glyph outlines baked
+  from Noto Music (SIL OFL).
+- **Type**: Bodoni Moda, Newsreader, DM Mono.
