@@ -1,0 +1,988 @@
+/* Fig. 1 — The cipher.
+   A reference plate from an old theory book: the seven notes on a
+   treble staff, their names, and the alphabet folded into seven
+   columns beneath them. Hairlines, square cells, perfect alignment,
+   and one vermillion for whatever is sounding.                     */
+
+/* ── Section rhythm ─────────────────────────────────────────────── */
+
+.head {
+  max-width: 46rem;
+}
+
+.spread {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: clamp(3rem, 10vw, 4.5rem);
+  margin-top: clamp(1.75rem, 5vw, 3rem);
+}
+
+@media (min-width: 1100px) {
+  .spread {
+    grid-template-columns: minmax(0, 27rem) minmax(0, 1fr);
+    column-gap: clamp(3rem, 6vw, 6.5rem);
+    align-items: start;
+  }
+}
+
+.prose > p + p {
+  margin-top: 1.05em;
+}
+
+/* a phrase that reads as one thing ("Opus 1", "A, B, E, G, G") */
+.nowrap {
+  white-space: nowrap;
+}
+
+/* ── The plate ──────────────────────────────────────────────────── */
+
+/* Everything on the plate is sized from one number: the cell. The staff
+   is drawn in its own units (a staff space is 10, a column is 63), so it
+   scales with the cells and stays locked to their columns. On the
+   narrowest phones (320px: Display Zoom, a zoomed page, a fold's cover
+   screen) the cell shrinks until the seven columns fit the measure.  */
+.plateCol {
+  --cell: min(44px, calc((100vw - 2 * var(--gutter) - 8px) / 7));
+  --line: 1px;
+  --grid-w: calc(7 * var(--cell) + 8 * var(--line));
+  --u: calc(var(--cell) / 63);
+  --staff-h: calc(76 * var(--u));
+  --names-h: calc(var(--cell) * 0.74);
+  /* "becomes" tucks up under the staff, into the room the clef's tail
+     leaves beneath the bottom line                                  */
+  --bracket-h: calc(var(--cell) * 0.34);
+  --bracket-tuck: calc(10 * var(--u));
+  /* a note name's hit area reaches up to its note on the staff */
+  --head-reach: calc(var(--staff-h) - var(--bracket-tuck) + var(--bracket-h));
+  width: 100%;
+  max-width: calc(var(--grid-w) + 1.3 * var(--cell));
+  margin-inline: auto;
+  min-width: 0;
+}
+
+/* whole pixels keep the hairlines between the cells crisp */
+@supports (width: round(down, 1px, 1px)) {
+  .plateCol {
+    --cell: min(44px, round(down, calc((100vw - 2 * var(--gutter) - 8px) / 7), 1px));
+  }
+}
+
+@media (min-width: 560px) {
+  .plateCol {
+    --cell: 52px;
+  }
+}
+
+@media (min-width: 860px) {
+  .plateCol {
+    --cell: 60px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .plateCol {
+    --cell: 56px;
+    margin-inline: auto 0;
+    padding-top: 0.35rem;
+  }
+}
+
+@media (min-width: 1320px) {
+  .plateCol {
+    --cell: 60px;
+  }
+}
+
+.figure {
+  margin: 0;
+}
+
+/* The staff: lines across the whole plate, clef in the margin, a double
+   bar at the end, and one whole note over each column.               */
+.staff {
+  position: relative;
+  height: var(--staff-h);
+  /* on the narrowest phones the staff borrows up to 12px of gutter each
+     side, so the clef never crowds the first note                   */
+  margin-inline: clamp(-12px, calc((100% - var(--grid-w) - 0.8 * var(--cell)) / 2), 0px);
+  color: var(--color-ink);
+}
+
+.staffLines {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  color: color-mix(in srgb, var(--color-ink) 78%, var(--color-paper));
+}
+
+.clef,
+.barline {
+  position: absolute;
+  top: 0;
+  display: block;
+  height: var(--staff-h);
+  overflow: visible;
+}
+
+.clef {
+  left: 0;
+  width: calc(30 * var(--u));
+}
+
+.barline {
+  right: 0;
+  width: calc(8 * var(--u));
+  color: color-mix(in srgb, var(--color-ink) 78%, var(--color-paper));
+}
+
+.staffNotes {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, var(--cell));
+  column-gap: var(--line);
+  width: var(--grid-w);
+  height: 100%;
+  margin-inline: auto;
+  padding-inline: var(--line);
+}
+
+.staffNote {
+  display: block;
+  width: var(--cell);
+  height: var(--staff-h);
+  overflow: visible;
+}
+
+/* colours set here rather than as SVG attributes: WebKit won't resolve
+   var() inside presentation attributes                              */
+.staffHot {
+  fill: var(--color-vermillion);
+  opacity: 0;
+}
+
+/* scales about its own centre (the glyphs keep their own transforms) */
+.staffRing {
+  stroke: var(--color-vermillion);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* The verb of the table, set like a tuplet bracket over the row of note
+   names it governs: its arms come down onto A and G.                 */
+.bracket {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  column-gap: 0.7em;
+  width: calc(6 * (var(--cell) + var(--line)));
+  height: var(--bracket-h);
+  margin: calc(-1 * var(--bracket-tuck)) auto 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "opsz" 18;
+  font-size: var(--bracket-h);
+  line-height: 1;
+  color: var(--color-ink-soft);
+  pointer-events: none;
+}
+
+.bracketArm {
+  height: calc(var(--cell) * 0.15);
+  border-top: 1px solid var(--color-graphite);
+  translate: 0 calc(var(--cell) * 0.075 + 0.05em);
+}
+
+.bracketArm:first-child {
+  border-left: 1px solid var(--color-graphite);
+}
+
+.bracketArm:last-child {
+  border-right: 1px solid var(--color-graphite);
+}
+
+.bracketLabel {
+  padding-bottom: 0.08em;
+}
+
+/* ── The table ─────────────────────────────────────────────────── */
+
+.grid {
+  position: relative;
+  isolation: isolate;
+  width: var(--grid-w);
+  margin-inline: auto;
+}
+
+.names {
+  display: grid;
+  grid-template-columns: repeat(7, var(--cell));
+  column-gap: var(--line);
+  height: var(--names-h);
+  padding-inline: var(--line);
+}
+
+.name {
+  position: relative;
+  z-index: 2;
+}
+
+/* The note names are keys as well: strike one and every letter that
+   becomes it answers. Its hit area reaches up over the bracket to its
+   note on the staff, so the whole head of the column is one target.  */
+.headKey {
+  position: relative;
+  display: grid;
+  place-items: end center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0 0 calc(var(--cell) * 0.12);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "opsz" 36;
+  font-size: calc(var(--cell) * 0.56);
+  line-height: 1;
+  color: var(--color-vermillion-deep);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.headKey::before {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--head-reach)) 0 0;
+}
+
+.headKey > span {
+  grid-area: 1 / 1;
+}
+
+.headKey:focus-visible {
+  outline: none;
+}
+
+.headRing {
+  width: calc(var(--cell) * 0.76);
+  aspect-ratio: 1;
+  margin-bottom: calc(var(--cell) * -0.12);
+  border: 1.5px solid var(--color-vermillion);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.headKey:focus-visible .headRing {
+  opacity: 1;
+}
+
+.nameHot {
+  color: var(--color-vermillion);
+  opacity: 0;
+}
+
+/* hovering a letter underlines the note it becomes — the lookup, previewed */
+.name::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--cell) * 0.04);
+  width: calc(var(--cell) * 0.36);
+  height: 1px;
+  margin-left: calc(var(--cell) * -0.18);
+  background: var(--color-vermillion-deep);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-micro) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .name:hover::after,
+  .grid:has([data-c="0"]:hover) [data-head="0"]::after,
+  .grid:has([data-c="1"]:hover) [data-head="1"]::after,
+  .grid:has([data-c="2"]:hover) [data-head="2"]::after,
+  .grid:has([data-c="3"]:hover) [data-head="3"]::after,
+  .grid:has([data-c="4"]:hover) [data-head="4"]::after,
+  .grid:has([data-c="5"]:hover) [data-head="5"]::after,
+  .grid:has([data-c="6"]:hover) [data-head="6"]::after {
+    opacity: 1;
+  }
+
+  /* …and hovering a note lifts every letter that becomes it */
+  .grid:has([data-head="0"]:hover) [data-c="0"],
+  .grid:has([data-head="1"]:hover) [data-c="1"],
+  .grid:has([data-head="2"]:hover) [data-c="2"],
+  .grid:has([data-head="3"]:hover) [data-c="3"],
+  .grid:has([data-head="4"]:hover) [data-c="4"],
+  .grid:has([data-head="5"]:hover) [data-c="5"],
+  .grid:has([data-head="6"]:hover) [data-c="6"] {
+    background: var(--color-paper-raised);
+  }
+}
+
+.body {
+  display: grid;
+  row-gap: var(--line);
+  border: var(--line) solid var(--color-ink);
+  background: var(--color-rule);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(7, var(--cell));
+  column-gap: var(--line);
+}
+
+.cell {
+  position: relative;
+  height: var(--cell);
+  background: var(--color-paper);
+}
+
+/* Every letter is a button that fills its cell exactly. */
+.key {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: calc(var(--cell) * 0.4);
+  line-height: 1;
+  color: var(--color-ink);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.key > * {
+  grid-area: 1 / 1;
+}
+
+.key:focus-visible {
+  outline: none;
+}
+
+.glyph,
+.glyphHot {
+  /* DM Mono's capitals sit a hair low in their line box */
+  translate: 0 -0.02em;
+  transition: scale var(--dur-micro) var(--ease-out);
+}
+
+.key:active .glyph,
+.key:active .glyphHot {
+  scale: 0.88;
+}
+
+/* the letter punched out of the stamp: same cell, same pixels as the ink */
+.glyphHot {
+  color: var(--color-paper-raised);
+  opacity: 0;
+}
+
+/* Her letters: a hairline ring, as if circled in the margin. */
+.ring {
+  width: calc(var(--cell) * 0.74);
+  aspect-ratio: 1;
+  border: 1px solid var(--color-ink);
+  border-radius: 50%;
+}
+
+.focusRing {
+  width: calc(var(--cell) - 6px);
+  aspect-ratio: 1;
+  border: 1.5px solid var(--color-vermillion);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.key:focus-visible .focusRing {
+  opacity: 1;
+}
+
+/* The stamp: a vermillion disc behind a paper-coloured letter — inside the
+   ring on her letters, like a bubble filled in on an answer sheet.    */
+.disc {
+  width: calc(var(--cell) * 0.64);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-vermillion);
+  opacity: 0;
+}
+
+/* hover lightens the cell itself, beneath the wash, never over it */
+@media (hover: hover) and (pointer: fine) {
+  .cell:hover {
+    background: var(--color-paper-raised);
+  }
+}
+
+/* The alphabet runs out after Z: the last two cells are hatched, the way
+   an engraver fills a space that is meant to stay empty.            */
+.blank {
+  overflow: hidden;
+}
+
+.hatch {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: var(--color-rule);
+}
+
+/* A faint wash that runs up the column, from the letter to its note. */
+.wash {
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  left: calc(var(--line) + var(--c) * (var(--cell) + var(--line)));
+  width: var(--cell);
+  height: calc(var(--names-h) + var(--line) + (var(--r, 0) + 1) * (var(--cell) + var(--line)));
+  background: var(--color-blush);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Caption, readout, spell ───────────────────────────────────── */
+
+.caption {
+  width: var(--grid-w);
+  margin: 0.8rem auto 0;
+  /* graphite is too faint for small text; captions here are read */
+  color: var(--color-ink-soft);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: var(--grid-w);
+  max-width: 100%;
+  margin: 1.35rem auto 0;
+}
+
+/* The readout takes whatever the Spell button leaves, and measures
+   itself against that (her whole name has to fit in it).          */
+.readout {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  container-type: inline-size;
+  display: flex;
+  align-items: flex-end;
+  height: 2.75rem;
+  color: var(--color-ink);
+}
+
+.rPair {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  height: 100%;
+}
+
+.slot {
+  display: grid;
+  place-items: end center;
+  min-width: 2.1rem;
+  height: 100%;
+  border-bottom: 1px solid var(--color-graphite);
+}
+
+.slot > span {
+  grid-area: 1 / 1;
+}
+
+.rLetter {
+  display: flex;
+  gap: 0.3em;
+  padding-bottom: 0.32rem;
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--color-ink);
+  animation: slot-in var(--dur-ui) var(--ease-out) both;
+}
+
+/* a whole column (B I P W) is set a size down, so four letters, the
+   arrow and the note still fit beside the button at 320px          */
+.rLetter[data-many] {
+  padding-bottom: 0.36rem;
+  font-size: 0.95rem;
+}
+
+.rNote {
+  padding-bottom: 0.18rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "opsz" 36;
+  font-size: 1.85rem;
+  line-height: 1;
+  color: var(--color-vermillion-deep);
+  animation:
+    slot-in var(--dur-ui) var(--ease-out) both,
+    slot-tint 1100ms var(--ease-out) both;
+}
+
+/* Before the first tap: a worked example from her own name, pencilled
+   in (graphite, perfectly still) — the move, shown before it's asked. */
+.exLetter {
+  padding-bottom: 0.32rem;
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--color-ink-soft);
+}
+
+.exNote {
+  padding-bottom: 0.18rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "opsz" 36;
+  font-size: 1.85rem;
+  line-height: 1;
+  color: var(--color-graphite);
+}
+
+@keyframes slot-in {
+  from {
+    opacity: 0;
+    translate: 0 5px;
+  }
+}
+
+@keyframes slot-tint {
+  from {
+    color: var(--color-vermillion);
+  }
+}
+
+.rArrow {
+  position: relative;
+  flex: none;
+  width: 2.1rem;
+  height: 9px;
+  margin-bottom: 0.72rem;
+  color: var(--color-ink-soft);
+  transition: color var(--dur-ui) var(--ease-out);
+}
+
+.readout[data-state="example"] .rArrow {
+  color: var(--color-graphite);
+}
+
+.rArrow > span {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  right: 5px;
+  height: 1px;
+  background: currentColor;
+}
+
+.rArrow > svg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 9px;
+  fill: currentColor;
+}
+
+/* Her name, as she spells it: one blank per letter, each filled in with
+   the letter over the note it becomes.                              */
+.rName {
+  --col: min(1.25rem, calc(100cqi / var(--n)));
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: var(--col);
+  height: 100%;
+}
+
+@supports not (width: 1cqi) {
+  .rName {
+    --col: 0.9rem;
+  }
+}
+
+.rCol {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: end;
+  row-gap: 0.28rem;
+  height: 100%;
+  padding-bottom: 0.2rem;
+}
+
+.rCol::after {
+  content: "";
+  position: absolute;
+  left: 16%;
+  right: 16%;
+  bottom: 0;
+  height: 1px;
+  background: var(--color-graphite);
+}
+
+.rColLetter {
+  font-family: var(--font-mono);
+  font-size: min(0.72rem, calc(var(--col) * 0.7));
+  line-height: 1;
+  color: var(--color-ink-soft);
+  animation: slot-in var(--dur-ui) var(--ease-out) both;
+}
+
+/* set like the derivation's notes (DM Mono): nine italic capitals won't
+   sit apart in a 16px column, and the answer must read note by note  */
+.rColNote {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: min(1.2rem, calc(var(--col) * 1.02));
+  line-height: 1;
+  color: var(--color-vermillion-deep);
+  animation:
+    slot-in var(--dur-ui) var(--ease-out) both,
+    slot-tint 1100ms var(--ease-out) both;
+}
+
+.spell {
+  flex: none;
+}
+
+.spellHead {
+  width: 10px;
+  height: 16px;
+  margin-top: -3px;
+  color: var(--color-ink);
+  transition: color var(--dur-ui) var(--ease-out);
+}
+
+.spell[aria-pressed="true"] .spellHead {
+  color: var(--color-vermillion);
+}
+
+/* 320–359px: the readout and the button still share one line */
+@media (max-width: 359px) {
+  .controls {
+    gap: 0.75rem;
+  }
+
+  .controls .spell {
+    padding-inline: 0.75rem;
+    letter-spacing: 0.08em;
+  }
+
+  .rPair {
+    gap: 0.4rem;
+  }
+
+  .slot {
+    min-width: 1.7rem;
+  }
+
+  .rArrow {
+    width: 1.7rem;
+  }
+}
+
+/* ── The derivation ────────────────────────────────────────────── */
+
+.derivation {
+  container-type: inline-size;
+  margin-top: clamp(4.5rem, 15vw, 7.5rem);
+  text-align: center;
+}
+
+/* on a phone the name runs almost edge to edge: every pair gets a
+   wider target, and nine letters still sit on one line             */
+@media (max-width: 559px) {
+  .derivation {
+    margin-inline: calc(8px - var(--gutter));
+  }
+}
+
+.dLabel {
+  margin-bottom: clamp(1.5rem, 5vw, 2.25rem);
+}
+
+.pairs {
+  --pair-w: min(5.75rem, calc(100cqi / var(--n)));
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* before container units (iOS 15): size from the viewport instead */
+@supports not (width: 1cqi) {
+  .pairs {
+    --pair-w: min(5.75rem, calc((100vw - 2 * var(--gutter)) / var(--n)));
+  }
+
+  @media (max-width: 559px) {
+    .pairs {
+      --pair-w: min(5.75rem, calc((100vw - 16px) / var(--n)));
+    }
+  }
+}
+
+.pairSlot {
+  width: var(--pair-w);
+  flex: none;
+}
+
+.pair {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0.25rem 0 0.5rem;
+  border: 0;
+  /* a cartouche around the whole pair: the hover tint and the focus ring */
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-ink);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  transition: background-color var(--dur-ui) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pair:hover {
+    background: var(--color-paper-raised);
+  }
+
+  .pair:hover .pArrow {
+    color: var(--color-ink);
+  }
+}
+
+.pair:focus-visible {
+  outline-offset: 0;
+}
+
+.pair > span {
+  display: grid;
+  place-items: center;
+}
+
+.pair > span > span {
+  grid-area: 1 / 1;
+}
+
+.pLetter {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 450;
+  font-variation-settings: "opsz" 72;
+  font-size: min(4.25rem, calc(var(--pair-w) * 1.02));
+  line-height: 1.12;
+  transition:
+    opacity 560ms var(--ease-out),
+    translate 720ms var(--ease-out);
+  transition-delay: calc(var(--i) * 95ms);
+}
+
+.pLetterHot,
+.pNoteHot {
+  color: var(--color-vermillion);
+  opacity: 0;
+}
+
+.pArrow {
+  --shaft: clamp(1.5rem, calc(var(--pair-w) * 0.62), 2.6rem);
+  position: relative;
+  width: 9px;
+  height: calc(var(--shaft) + 7px);
+  margin-block: 0.3rem 0.45rem;
+  color: var(--color-ink-soft);
+  transition: color var(--dur-ui) var(--ease-out);
+}
+
+.pArrow > span {
+  position: absolute;
+  top: 0;
+  left: 4px;
+  width: 1px;
+  height: var(--shaft);
+  background: currentColor;
+  transform-origin: top;
+}
+
+.pArrow > svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  fill: currentColor;
+}
+
+.pArrow > .hot {
+  background: var(--color-vermillion);
+  opacity: 0;
+}
+
+.pArrow > svg.hot {
+  background: none;
+  fill: var(--color-vermillion);
+}
+
+.shaft {
+  transition: scale 420ms var(--ease-out);
+  transition-delay: calc(var(--i) * 95ms + 190ms);
+}
+
+.arrowHead {
+  transition: opacity 220ms linear;
+  transition-delay: calc(var(--i) * 95ms + 470ms);
+}
+
+.pNote {
+  font-family: var(--font-mono);
+  font-size: clamp(0.95rem, calc(var(--pair-w) * 0.34), 1.3rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  transition:
+    opacity 520ms var(--ease-out),
+    translate 620ms var(--ease-out);
+  transition-delay: calc(var(--i) * 95ms + 500ms);
+}
+
+/* before it has been seen */
+.derivation:not([data-in]) .pLetter {
+  opacity: 0;
+  translate: 0 0.22em;
+}
+
+.derivation:not([data-in]) .shaft {
+  scale: 1 0;
+}
+
+.derivation:not([data-in]) .arrowHead {
+  opacity: 0;
+}
+
+.derivation:not([data-in]) .pNote {
+  opacity: 0;
+  translate: 0 -0.3em;
+}
+
+/* ── After the table ───────────────────────────────────────────── */
+
+.coda {
+  max-width: var(--measure);
+  margin-top: clamp(3.5rem, 12vw, 6rem);
+}
+
+.pull {
+  margin-top: clamp(2.75rem, 9vw, 4rem);
+}
+
+.pullRule {
+  display: block;
+  width: 48px;
+  height: 1px;
+  margin-bottom: 1.35rem;
+  background: var(--color-ink);
+}
+
+.closing {
+  margin-top: 1rem;
+}
+
+/* On a wide page the section comes home to the centre line the name
+   was just written out on: a centred coda under a centred derivation,
+   leading into the centred epigraph that follows.                 */
+@media (min-width: 1100px) {
+  .coda {
+    max-width: 31rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .coda p {
+    text-wrap: balance;
+  }
+
+  .pullRule {
+    margin-inline: auto;
+  }
+}
+
+/* ── Reduced motion: fades only ────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .glyph,
+  .glyphHot {
+    transition: none;
+  }
+
+  .key:active .glyph,
+  .key:active .glyphHot {
+    scale: none;
+  }
+
+  .rLetter,
+  .rColLetter {
+    animation-name: slot-fade;
+  }
+
+  .rNote,
+  .rColNote {
+    animation:
+      slot-fade var(--dur-ui) linear both,
+      slot-tint 1100ms var(--ease-out) both;
+  }
+
+  .pLetter,
+  .pNote {
+    transition-property: opacity;
+  }
+
+  .derivation:not([data-in]) .pLetter,
+  .derivation:not([data-in]) .pNote {
+    translate: none;
+  }
+
+  .shaft {
+    transition: opacity 420ms linear calc(var(--i) * 95ms + 190ms);
+  }
+
+  .derivation:not([data-in]) .shaft {
+    scale: none;
+    opacity: 0;
+  }
+}
+
+@keyframes slot-fade {
+  from {
+    opacity: 0;
+  }
+}
