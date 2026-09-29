@@ -1,0 +1,101 @@
+/* Fig. 2a — the engraver's plate the music cuts her portrait into. */
+
+.plateFig {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+}
+
+.kicker {
+  align-self: center;
+  margin-bottom: 0.9rem;
+}
+
+/* the faint rectangle an intaglio plate presses into the paper */
+.mark {
+  /* small enough on a phone that the strip, the button and the plate share a screen */
+  width: min(100%, 14.5rem);
+  padding: 12px;
+  background: color-mix(in srgb, var(--color-paper-deep) 55%, var(--color-paper));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--color-rule) 90%, var(--color-ink) 4%),
+    inset 1px 1px 0 1px color-mix(in srgb, var(--color-paper-raised) 70%, transparent);
+}
+
+@media (min-width: 768px) {
+  .mark {
+    width: 17.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .mark {
+    width: 19rem;
+  }
+}
+
+.plate {
+  position: relative;
+  width: 100%;
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  color: var(--color-ink);
+}
+
+.caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.85rem;
+  min-height: 3.4rem;
+  text-align: center;
+}
+
+.status {
+  max-width: 19rem;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--color-ink-soft);
+  text-wrap: balance;
+  font-variant-numeric: tabular-nums;
+}
+
+.statusDone {
+  font-family: var(--font-display);
+  font-weight: 450;
+  font-size: 1.2rem;
+  color: var(--color-ink);
+}
+
+.clear {
+  min-height: 44px;
+  padding: 0 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule);
+  text-underline-offset: 0.35em;
+}
+.clear:hover {
+  color: var(--color-ink);
+}
