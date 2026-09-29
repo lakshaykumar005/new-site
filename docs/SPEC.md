@@ -91,8 +91,11 @@ music, no dark mode, no script fonts, no emoji.
   `src/content/copy.ts` (all copy + `NAME_FACTS`, `numberWord`). Don't edit these; if you
   genuinely need an extra string (an aria-label, a button label), declare it as a const at
   the top of your own component and list it in your report.
-- `SoundToggle` is fixed at the top-right (44px, safe-area aware) on every page — keep a
-  64×64px clear zone there.
+- `SoundToggle` is fixed at the top-right and the Contents running head at the top-left
+  (both 44px, safe-area aware) on every page — keep a 64×64px clear zone in both top corners.
+- The site is a book of eight pages (`src/content/pages.ts`); each page ends with the page
+  turner, and ← / → or a sideways swipe turns pages. Anything that takes horizontal gestures
+  itself uses `touch-action: none` (or `data-noswipe`).
 
 ## Sections (page order) and their owners
 
@@ -121,7 +124,8 @@ landing (`haptic(6)`), and its note name appears beneath in DM Mono; the letter 
 ink. Notes sit under the centre of their letter (not engraved spacing). Then ~500ms pause and
 the full theme (`compose(HER_NAME,'theme')`) plays with accompaniment via `useScorePlayer`,
 each note flashing vermillion as it sounds. Then fade in `titlePage.after` (two lines) and a
-scroll cue (a small down-stroke + "Fig. 1"), and the CTA becomes `titlePage.again` (replays
+page-turn cue (the next page's title, "Frontispiece", with a hairline arrow — a link with
+`transitionTypes={["nav-forward"]}`), and the CTA becomes `titlePage.again` (replays
 the full theme only). If sound is muted, the visuals run the same and `titlePage.mutedNote`
 appears. Listen for `window` event `"von:replay"` (dispatched by the Coda's D.C. button) and
 replay the full theme. Reduced motion: notes fade in place, letters tint without lifting.
@@ -207,7 +211,7 @@ else clipboard + `yourTurn.copied` toast (aria-live). `yourTurn.sendNote` beneat
 reads `location.hash` on mount → `decodeWord`. Valid: `arrived.kicker`, `arrived.title`
 (t-display), `arrived.lede`, the engraved notes of the word with letters hidden, and Play.
 As each note sounds its letter appears beneath it; at the end `arrived.reveal` and the word
-itself, large, in `.t-title`; then links `arrived.answer` → `/#your-turn` and `arrived.home`
+itself, large, in `.t-title`; then links `arrived.answer` → `/your-turn` and `arrived.home`
 → `/`. Invalid/missing hash: `arrived.invalidTitle` + `.invalidLede` + home link.
 
 ### 6. Coda — `#coda` — `/lab/coda` (+ site meta)
