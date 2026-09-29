@@ -29,9 +29,9 @@ function Note({ n, s, state }: { n: LaidNote; s: number; state: "idle" | "active
   const ledgerHalf = n.headW / 2 + 0.42 * s;
   return (
     <g className={`sl-note sl-${state}`} data-id={n.ev.id}>
-      {n.ledgers.map((y) => (
+      {n.ledgers.map((y, i) => (
         <line
-          key={y}
+          key={i}
           x1={n.x - ledgerHalf}
           x2={n.x + ledgerHalf}
           y1={y}
@@ -110,6 +110,9 @@ export default function ScoreLine({
 
   const { s, top, bottom, left, right } = layout;
   const staffLines = [0, 1, 2, 3, 4].map((i) => top + i * s);
+  // the staff ends where the music does: flush with the final double bar
+  const finalBar = layout.bars.find((b) => b.kind === "final");
+  const staffEnd = finalBar ? Math.min(right, finalBar.x + 0.1 * s) : right;
 
   return (
     <svg
@@ -122,7 +125,7 @@ export default function ScoreLine({
     >
       <g className="sl-staff" stroke="currentColor" strokeWidth={0.1 * s}>
         {staffLines.map((y, i) => (
-          <line key={i} x1={left} x2={right} y1={y} y2={y} pathLength={1} className="sl-staff-line" />
+          <line key={i} x1={left} x2={staffEnd} y1={y} y2={y} pathLength={1} className="sl-staff-line" />
         ))}
       </g>
 
