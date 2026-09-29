@@ -1,0 +1,267 @@
+/* Fig. 3 — a page of printed music.
+   Six systems, one staff size, justified to both margins; each with
+   its heading, its tempo marking and one sentence underneath.       */
+
+.column {
+  max-width: 56rem;
+  margin-inline: auto;
+}
+
+.title {
+  margin-top: 1rem;
+}
+
+/* break at the phrase ("Same nine notes, / six moods"), not inside it;
+   .column lifts it over .t-display's balance, which splits "nine notes" */
+.column .title {
+  text-wrap: pretty;
+}
+
+.lede {
+  margin-top: 1.25rem;
+}
+
+/* ── the page ─────────────────────────────────────────────── */
+
+.systems {
+  container-type: inline-size;
+  /* the page's one staff space: estimated here from the column width before
+     the script has measured it, then set exactly (inline) once it has */
+  --s: min(var(--smax), 100cqw / var(--span));
+  list-style: none;
+  margin: clamp(5rem, 12.5vw, 8rem) 0 0;
+  padding: 0;
+  display: grid;
+  row-gap: clamp(4.5rem, 12vw, 7.5rem);
+}
+
+.system {
+  position: relative;
+}
+
+/* heading and tempo marking at the left, the play disc at the right */
+.head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 1rem;
+}
+
+.system .name {
+  margin: 0;
+  font-size: clamp(1.34rem, 2.5vw, 1.72rem);
+  /* true optical size for a smaller heading: Bodoni's hairlines hold up */
+  font-variation-settings: normal;
+}
+
+/* printed where a tempo marking goes: just above the clef */
+.system .mark {
+  margin: 0.4rem 0 0;
+  font-size: clamp(1rem, 1.35vw, 1.1rem);
+  line-height: 1.2;
+  color: var(--color-ink);
+}
+
+/* upright, at a small optical size so the "=" and the figures hold their own beside the solid note */
+.metro {
+  margin-left: 0.75em;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 0.94em;
+  font-variation-settings: "opsz" 9;
+  font-variant-numeric: lining-nums;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.metroNote {
+  display: inline-block;
+  height: 1.14em;
+  width: auto;
+  margin-right: 0.3em;
+  vertical-align: -0.12em;
+  overflow: visible;
+  transition: color var(--dur-ui) var(--ease-out);
+}
+
+/* while its system plays, the mark keeps time: the note strikes vermillion on each beat, then fades back */
+.metroNote[data-tick] {
+  color: var(--color-vermillion);
+  transition: none;
+}
+
+/* ── the engraved line ────────────────────────────────────────
+   One staff space for the whole page (--s, set on .systems), so the
+   height is right before the page is measured.                     */
+
+.staffBox {
+  position: relative;
+  isolation: isolate;
+  height: calc(var(--s) * var(--hs) + 2px);
+}
+
+/* a system broken in two: the second line follows at a little distance */
+.staffBox + .staffBox {
+  margin-top: calc(var(--s) * 0.9);
+}
+
+/* under the ink, a faint wash on the bar being played (lit by System) */
+.wash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* faint, like a pencil tint on the page; it arrives with the downbeat and lingers a moment as the music moves on */
+.wash rect {
+  fill: var(--color-blush);
+  opacity: 0;
+  transition: opacity var(--dur-ui) var(--ease-out);
+}
+
+.wash rect[data-on] {
+  opacity: 0.5;
+  transition-duration: var(--dur-micro);
+}
+
+/* drawn 1:1 and a touch wider than the column; cropped at its last barline */
+.staff {
+  width: calc(100% + var(--extra, 0px));
+  max-width: none;
+  height: 100%;
+  clip-path: inset(-3rem var(--cut, 0px) -3rem -3rem);
+}
+
+/* her letters under the notes, readable on a phone */
+.staff :global(.sl-letter) {
+  font-size: max(11px, var(--s) * 1.35);
+  fill: var(--color-ink-soft);
+}
+
+.staff :global(.sl-letter.sl-active) {
+  fill: var(--color-vermillion-deep);
+}
+
+/* a caption under the music: even lines, no runts */
+.system .line {
+  margin: 0.85rem 0 0;
+  max-width: var(--measure);
+  color: var(--color-ink-soft);
+  text-wrap: balance;
+}
+
+.compound {
+  white-space: nowrap;
+}
+
+/* ── play / stop: a vermillion disc ──────────────────────── */
+
+.play {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  /* the disc's edge, not the hit area's, sits on the right margin (over the final barline) */
+  margin-right: -5px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  transition: transform var(--dur-micro) var(--ease-out);
+}
+
+.play:active {
+  transform: scale(0.94);
+}
+
+/* the focus ring hugs the disc (the global one would square the corners) */
+.play:focus-visible {
+  border-radius: 999px;
+  outline-offset: -3px;
+}
+
+.disc {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: var(--color-vermillion);
+  color: var(--color-paper-raised);
+  outline: 1px solid transparent;
+  outline-offset: 3.5px;
+  transition:
+    background-color var(--dur-ui) var(--ease-out),
+    outline-color var(--dur-ui) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .play:hover .disc {
+    background: var(--color-vermillion-deep);
+  }
+}
+
+/* sounding: an ink hairline rings the disc (the focus ring stands in for it) */
+.play[data-on="true"]:not(:focus-visible) .disc {
+  outline-color: var(--color-ink);
+}
+
+.glyph {
+  width: 18px;
+  height: 18px;
+  overflow: visible;
+}
+
+.tri,
+.sq {
+  fill: currentColor;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity var(--dur-micro) var(--ease-out),
+    transform var(--dur-ui) var(--ease-out);
+}
+
+.play[data-on="true"] .tri,
+.play[data-on="false"] .sq {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+/* ── today's pick: a note in the margin ──────────────────── */
+
+.system .badge {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 0.75rem);
+  margin: 0;
+  color: var(--color-vermillion-deep);
+}
+
+.system[data-picked]::before {
+  content: "";
+  position: absolute;
+  top: calc(-0.75rem - 1rem);
+  bottom: 0.35rem;
+  left: calc(var(--gutter) * -0.55);
+  width: 1px;
+  background: var(--color-vermillion);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tri,
+  .sq {
+    transition: opacity var(--dur-micro) linear;
+  }
+  .play[data-on="true"] .tri,
+  .play[data-on="false"] .sq {
+    transform: none;
+  }
+  .play:active {
+    transform: none;
+  }
+}
