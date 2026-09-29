@@ -42,7 +42,7 @@ Tokens (Tailwind 4 theme, see `src/app/globals.css`):
 
 Type (loaded in `layout.tsx` as CSS variables; use the role classes in `globals.css`):
 
-- **Bodoni Moda** (variable, opsz + wght, italic) — `.t-title` (the name), `.t-display`
+- **Cormorant Garamond** (variable, wght, italic) — `.t-title` (the name), `.t-display`
   (section titles), `.t-heading`, `.t-mark` (Italian tempo markings). Display is italic.
 - **Newsreader** (variable, opsz) — `.t-body`, `.t-lede`. All reading text.
 - **DM Mono** — `.t-kicker` ("Fig. 2 — The mechanism"), `.t-caption`, `.t-mono`, note
@@ -106,7 +106,7 @@ never start or stop it). The full page is `http://localhost:3100/`.
 ### 1. TitlePage — `#top` — `/lab/title`
 
 A score's title page, one screen tall (`min-h-[100svh]`), centred column:
-`titlePage.eyebrow` (kicker) · a 48px hairline · `titlePage.on` (Bodoni italic, ink-soft) ·
+`titlePage.eyebrow` (kicker) · a 48px hairline · `titlePage.on` (Cormorant italic, ink-soft) ·
 **HER_NAME** in `.t-title`, as large as fits (fit it to the column width by measuring;
 must work for names of 3–12 letters; each letter its own span) · a treble staff under the
 name, the width of the name, with a clef at its left · a row with `titlePage.scoring` left and
@@ -134,13 +134,13 @@ replay the full theme. Reduced motion: notes fade in place, letters tint without
 
 `cipher.kicker` · `cipher.title` (t-display) · `cipher.paragraphs` (t-body, measure).
 **The cipher table**: 4 rows × 7 columns (`CIPHER_ROWS`) under a header row of the notes
-A–G (`NOTE_COLUMNS`, Bodoni italic, vermillion-deep) labelled `cipher.columnsLabel`. Every
+A–G (`NOTE_COLUMNS`, Cormorant italic, vermillion-deep) labelled `cipher.columnsLabel`. Every
 letter is a 44px button in DM Mono; the letters of HER_NAME carry a hairline ink ring. Tap a
 letter → `unlock` + pluck its note (`themeDnOf`), the cell and its column header flash
 vermillion, and a readout shows e.g. "P → B". `cipher.tableCaption` under the table.
 A quiet "Spell it out" button (`.btn-quiet`) walks through HER_NAME: each letter's cell
 lights, its column header lights, the note plays (~340ms apart).
-**The derivation**: `cipher.derivationLabel`, then HER_NAME as pairs — the letter (Bodoni
+**The derivation**: `cipher.derivationLabel`, then HER_NAME as pairs — the letter (Cormorant
 italic, large) over a hairline arrow over its note (DM Mono) — revealing in sequence when
 scrolled into view (visual only); tapping a pair plays its note. Then `cipher.result`
 (t-lede), then `cipher.kicker2` as a pull line (t-heading) and `cipher.closing` (t-body).
@@ -171,7 +171,7 @@ Input & physics (rAF loop only while moving; idle = no frames):
 - **Sound**: whenever a hole's beat is crossed (either direction, handle the loop wrap),
   `musicBox.pluck(ev.midi, {velocity: ev.velocity, voice: ev.voice})`; its comb tooth quivers
   (skip under reduced motion). Every 1/8 turn of the crank → `musicBox.tick()` + `haptic(4)`.
-- Above the strip, HER_NAME in Bodoni italic (small): the letter whose melody note is sounding
+- Above the strip, HER_NAME in Cormorant italic (small): the letter whose melody note is sounding
   lights vermillion.
 - Count complete forward passes; at 2, 4, 8, 16 show `musicBoxCopy.playCounts[n]` under the
   figure (fade, `aria-live="polite"`).
@@ -196,7 +196,7 @@ width inside a ~56rem column.
 
 ### 5. YourTurn — `#your-turn` — `/lab/your-turn` (+ the `/s` page)
 
-`yourTurn.kicker` · `.title` · `.lede`. A large underlined input (Bodoni italic ~2rem,
+`yourTurn.kicker` · `.title` · `.lede`. A large underlined input (Cormorant italic ~2rem,
 `maxLength = MAX_WORD`, `aria-label = yourTurn.inputLabel`, placeholder). As she types, each
 new letter plucks its note (call `unlock` in the input handler) and the engraved ScoreLine of
 `compose(word,'theme')` below updates live with `letters="char"`; empty → an empty staff and
@@ -217,18 +217,17 @@ itself, large, in `.t-title`; then links `arrived.answer` → `/your-turn` and `
 ### 6. Coda — `#coda` — `/lab/coda` (+ site meta)
 
 `coda.kicker` · `coda.title` (t-display) · `coda.letter` paragraphs (t-body, measure; a
-Bodoni italic drop cap on the first) · `coda.signoff` (Bodoni italic, right). Then the ending:
+Cormorant italic drop cap on the first) · `coda.signoff` (Cormorant italic, right). Then the ending:
 a short full-width staff that ends in a final double barline with a fermata above it and
-**`coda.fine`** in large Bodoni italic beneath the barline, like the end of a score. When it
+**`coda.fine`** in large Cormorant italic beneath the barline, like the end of a score. When it
 first scrolls into view: the staff draws in; if `musicBox.audible`, play the theme's final
 chord softly once. `coda.fineNote` beneath (small italic). Then `.btn-quiet` `coda.daCapo`
 (aria-label `coda.daCapoLabel`): smooth-scroll to `#top`, then
-`window.dispatchEvent(new Event("von:replay"))`. A tiny colophon at the very bottom: "Set in
-Bodoni Moda, Newsreader and DM Mono. Engraved in code." (t-caption, centred).
+`window.dispatchEvent(new Event("von:replay"))`. No colophon — the page ends on the da capo.
 
 Site meta (same owner): `src/app/icon.svg` (a vermillion notehead on paper), `src/app/
 not-found.tsx` (`chrome.notFound*`, same art direction), `src/app/robots.ts` (disallow all),
-`src/app/opengraph-image.tsx` (1200×630: paper, "Variations on a Name" in Bodoni italic, "for
+`src/app/opengraph-image.tsx` (1200×630: paper, "Variations on a Name" in Cormorant italic, "for
 HER_NAME", an engraved staff with her notes — load TTFs for ImageResponse from Google Fonts
 at build time or commit them under `assets/`).
 
@@ -265,7 +264,7 @@ asymmetric but calm book layout (alternate left/right placement, varying widths,
 beside or beneath). Each plate: the ink duotone (`duo`) inside a plate mark (the faint
 debossed rectangle an intaglio plate presses into paper: a hairline border 10–14px outside
 the image with a barely darker paper tone inside it — no drop shadows), a small `Pl. n`
-label (DM Mono), and the caption: `mark` (Bodoni italic, large) + `gloss` (DM Mono caps,
+label (DM Mono), and the caption: `mark` (Cormorant italic, large) + `gloss` (DM Mono caps,
 small) + `line` (Newsreader italic). **Touch or hover a plate → the colour photograph fades
 in over the duotone** (≈700ms, `--ease-out`), like a hand-tinted print; touch again (or
 leave) → back to ink. Reduced motion: instant swap. The crescendo plate is a **pair**: two
@@ -279,7 +278,7 @@ upscaled past their pixel width.
 
 `<Epigraph slot="cipher" />` renders `epigraphs[slot]` (copy.ts) between sections, or the
 plain fermata `Divider` when the slot is `null`. Set like the epigraph at the head of a
-movement: centred, `text` in Bodoni italic (~1.5–2rem, balanced), `by` beneath after an em
+movement: centred, `text` in Cormorant italic (~1.5–2rem, balanced), `by` beneath after an em
 dash in DM Mono caps (small, ink-soft), and `reply` (if any) beneath that in Newsreader
 (ink-soft). Hairline rules above and below, generous vertical space; `.reveal`.
 
@@ -290,7 +289,7 @@ dash in DM Mono caps (small, ink-soft), and `reply` (if any) beneath that in New
 Replace the six stacked systems with ONE instrument. Keep `variationsCopy` (kicker, title,
 lede, the six `items` with mark/title/line, todaysPick, play/stop) — add new keys only.
 
-- **The dial.** Six tempo markings (`items[*].mark`, Bodoni italic) sit around a ring like the
+- **The dial.** Six tempo markings (`items[*].mark`, Cormorant italic) sit around a ring like the
   bezel of a watch or the ring of a music-box cylinder; the current one sits at the top, in
   ink; the others fade to graphite. She turns it by dragging round it (pointer capture,
   `touch-action: none` on the ring only), by a horizontal swipe on the staff, with ← / →, or
@@ -333,10 +332,10 @@ keys only.
   rotated (±1.5°) like a print left to dry, with a small "Pl. n" and the caption beneath.
   Touch / hover the print → colour blooms in from the touch point (a radial `mask-image`
   growing from the pointer position, 700ms) — hand-tinting; touch again → back to ink.
-- Four plates (Scherzando, Dolce, Notturno, Amoroso) — the user removed the Tutti and
+- Four plates, captioned with the four verses of "I can admire you for four days…" — the user removed the Tutti and
   Crescendo plates; there is no pair any more. Amoroso is the frontispiece photograph.
-- Between print runs, small marginalia: the plate number, the marking (`mark`, Bodoni
-  italic, large), the gloss (DM Mono caps) and `line` (Newsreader italic) — laid out as a
+- Between print runs, small marginalia: the plate number, the verse (`mark`, Cormorant
+  italic, large), an optional gloss (DM Mono caps) and `line` (Cormorant italic) — laid out as a
   colophon beside the print on desktop, beneath it on phone.
 - Ambient: nothing moves until scrolled to; the roller and the pull happen once per plate;
   a "Print again" (small `.btn-quiet`) re-runs a plate's print. Reduced motion: the print

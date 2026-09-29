@@ -57,8 +57,8 @@ function circleFrom(deg: number, r: number): string {
   return `M${f1(x0)} ${f1(y0)}A${f1(r)} ${f1(r)} 0 1 1 ${f1(x1)} ${f1(y1)}A${f1(r)} ${f1(r)} 0 1 1 ${f1(x0)} ${f1(y0)}`;
 }
 
-/** Bodoni Moda italic, at 600: about this many ems per character, spaces included. */
-const EM_PER_CHAR = 0.6;
+/** Cormorant Garamond italic, at 600: about this many ems per character, spaces included. */
+const EM_PER_CHAR = 0.45;
 
 interface MarkSetting {
   lines: string[];

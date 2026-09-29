@@ -298,19 +298,15 @@ export const frontispiece = {
 export const platesCopy = {
   kicker: "Plates",
   title: "The evidence",
-  lede: "In case anyone ever asks why I made all this, here are four reasons. They’re printed in ink. Touch one and the colour comes back, which is roughly what you do to my day.",
-  touchHint: "Touch a print to bring the colour back",
-  pointerHint: "Hover over a print to bring the colour back",
+  lede: "In case anyone ever asks why I made all this, here are four reasons. They’re printed in ink.",
   // ── the print room ──
-  /** under the lede: how the plates arrive */
-  pressHint: "Each one prints as you reach it. No rush.",
   /** the state of a plate, printed in its margin */
   unprinted: "Waiting for you",
   printing: "Printing…",
   impression: (n: number) =>
     n === 1 ? "First impression" : n === 2 ? "Second look" : n === 3 ? "Third look. Understandable" : `Look ${n}. I get it`,
   printAgain: "Print again",
-  printAgainLabel: (mark: string) => `Print the plate marked ${mark} again`,
+  printAgainLabel: (mark: string) => `Print “${mark}” again`,
   /** announced when a plate has been pulled */
   printed: (n: number, mark: string) => `Plate ${n}, ${mark}, printed.`,
   /** what the "Pl." abbreviation stands for */

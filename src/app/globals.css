@@ -15,7 +15,7 @@
   --color-vermillion-deep: #b8341f;
   --color-blush: #f2d5c9;
 
-  --font-display: var(--font-bodoni), "Bodoni 72", Didot, Georgia, serif;
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Garamond, Georgia, serif;
   --font-heading: var(--font-cormorant), "Cormorant Garamond", Garamond, Georgia, serif;
   --font-serif: var(--font-newsreader), Georgia, serif;
   --font-mono: var(--font-dm-mono), ui-monospace, "SF Mono", monospace;
@@ -113,7 +113,7 @@ button {
   letter-spacing: -0.01em;
 }
 
-/* Cormorant sits smaller on its body than Bodoni: sizes are a step up */
+/* Cormorant sits small on its body: sizes are a step up */
 .t-display {
   font-family: var(--font-heading);
   font-style: italic;

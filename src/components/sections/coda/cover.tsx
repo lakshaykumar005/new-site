@@ -10,7 +10,7 @@ import { COVER_SIZE } from "./coverMeta";
 
 /**
  * The link preview (WhatsApp, iMessage, X): the cover of a first-edition
- * score. A ruled frame, the title in Bodoni italic, a dedication to her,
+ * score. A ruled frame, the title in Cormorant italic, a dedication to her,
  * and the theme engraved beneath it with her letters under the notes.
  * Rendered once at build time; fonts are static TTFs in assets/og.
  */
@@ -25,7 +25,7 @@ const GRAPHITE = "#8c8577";
 const STAFF = "#48475a"; // ink at 78% on paper, as the site draws staff lines
 const VERMILLION = "#d9432a";
 
-type Font = { name: string; data: ArrayBuffer; weight: 400 | 500 | 800; style: "normal" | "italic" };
+type Font = { name: string; data: ArrayBuffer; weight: 400 | 500 | 700; style: "normal" | "italic" };
 
 let fonts: Promise<Font[]> | null = null;
 
@@ -36,15 +36,14 @@ function loadFonts(): Promise<Font[]> {
     return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer;
   };
   fonts ??= Promise.all([
-    load("BodoniModa-Italic-48-500.ttf"),
-    load("BodoniModa-Italic-28-500.ttf"),
-    load("BodoniModa-Roman-14-800.ttf"),
+    load("CormorantGaramond-Italic-500.woff"),
+    load("CormorantGaramond-Roman-700.woff"),
     load("DMMono-Regular.ttf"),
     load("Newsreader-Italic-24-400.ttf"),
-  ]).then(([name, text, figures, mono, serif]): Font[] => [
-    { name: "Bodoni Name", data: name, weight: 500, style: "italic" },
-    { name: "Bodoni Text", data: text, weight: 500, style: "italic" },
-    { name: "Bodoni Figures", data: figures, weight: 800, style: "normal" },
+  ]).then(([italic, figures, mono, serif]): Font[] => [
+    { name: "Cormorant Name", data: italic, weight: 500, style: "italic" },
+    { name: "Cormorant Text", data: italic, weight: 500, style: "italic" },
+    { name: "Cormorant Figures", data: figures, weight: 700, style: "normal" },
     { name: "DM Mono", data: mono, weight: 400, style: "normal" },
     { name: "Newsreader", data: serif, weight: 400, style: "italic" },
   ]);
@@ -120,7 +119,7 @@ export async function renderCover(): Promise<ImageResponse> {
           position: "relative",
           background: PAPER,
           color: INK,
-          fontFamily: "Bodoni Text",
+          fontFamily: "Cormorant Text",
         }}
       >
         {/* a thick-and-thin frame, as engraved title pages have */}
@@ -143,7 +142,7 @@ export async function renderCover(): Promise<ImageResponse> {
           <div style={{ display: "flex", fontFamily: "DM Mono", fontSize: 14, letterSpacing: "0.22em" }}>
             {titlePage.scoring.toUpperCase()}
           </div>
-          <div style={{ display: "flex", fontFamily: "Bodoni Text", fontStyle: "italic", fontSize: 25, color: INK }}>
+          <div style={{ display: "flex", fontFamily: "Cormorant Text", fontStyle: "italic", fontSize: 25, color: INK }}>
             {titlePage.opus}
           </div>
         </div>
@@ -152,7 +151,7 @@ export async function renderCover(): Promise<ImageResponse> {
           style={{
             marginTop: 122,
             display: "flex",
-            fontFamily: "Bodoni Text",
+            fontFamily: "Cormorant Text",
             fontStyle: "italic",
             fontSize: 64,
             lineHeight: 1,
@@ -168,7 +167,7 @@ export async function renderCover(): Promise<ImageResponse> {
             style={{
               display: "flex",
               margin: "0 20px",
-              fontFamily: "Bodoni Text",
+              fontFamily: "Cormorant Text",
               fontStyle: "italic",
               fontSize: 30,
               lineHeight: 1,
@@ -183,7 +182,7 @@ export async function renderCover(): Promise<ImageResponse> {
           style={{
             marginTop: 4,
             display: "flex",
-            fontFamily: "Bodoni Name",
+            fontFamily: "Cormorant Name",
             fontStyle: "italic",
             fontSize: 140,
             lineHeight: 1.06,
@@ -209,8 +208,8 @@ export async function renderCover(): Promise<ImageResponse> {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontFamily: "Bodoni Figures",
-                  fontWeight: 800,
+                  fontFamily: "Cormorant Figures",
+                  fontWeight: 700,
                   fontSize: figSize,
                   lineHeight: 1,
                   color: INK,

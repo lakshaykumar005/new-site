@@ -561,7 +561,6 @@
 .captionTitle {
   margin: 0.4rem 0 0;
   font-size: clamp(1.4rem, 2.6vw, 1.85rem);
-  /* true optical size for a smaller heading: Bodoni's hairlines hold up */
   font-variation-settings: normal;
 }
 

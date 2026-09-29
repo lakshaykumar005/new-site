@@ -4,14 +4,6 @@ import FinalBar from "./coda/FinalBar";
 import { CODA_GLYPHS } from "./coda/glyphs";
 import styles from "./coda/coda.module.css";
 
-/** The engraver's imprint at the foot of the last page (each face named in itself). */
-const COLOPHON = {
-  lead: "Set in",
-  faces: ["Bodoni Moda", "Cormorant Garamond", "Newsreader", "DM Mono"],
-  and: "and",
-  tail: "Engraved in code.",
-};
-
 /** The coda sign, as a score marks the way to its ending. */
 function CodaSign() {
   const g = CODA_GLYPHS.coda;
@@ -63,16 +55,6 @@ export default function Coda() {
             <DaCapo />
           </FinalBar>
         </div>
-
-        <footer className={styles.colophon}>
-          <span className={styles.colophonRule} aria-hidden />
-          <p className="t-caption">
-            {COLOPHON.lead} <span className={`${styles.face} ${styles.faceBodoni}`}>{COLOPHON.faces[0]},</span>{" "}
-            <span className={`${styles.face} ${styles.faceCormorant}`}>{COLOPHON.faces[1]},</span>{" "}
-            <span className={`${styles.face} ${styles.faceNewsreader}`}>{COLOPHON.faces[2]}</span> {COLOPHON.and}{" "}
-            <span className={`${styles.face} ${styles.faceMono}`}>{COLOPHON.faces[3]}</span>. {COLOPHON.tail}
-          </p>
-        </footer>
       </div>
     </section>
   );

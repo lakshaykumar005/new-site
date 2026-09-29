@@ -29,44 +29,6 @@
   margin-top: 1.25rem;
 }
 
-.hint {
-  display: grid;
-  grid-template-columns: 1.75rem minmax(0, 1fr);
-  column-gap: 0.75rem;
-  margin-top: 1.5rem;
-  max-width: 30rem;
-  color: var(--color-ink-soft);
-  text-wrap: pretty;
-}
-
-.hint::before {
-  content: "";
-  grid-row: 1 / span 2;
-  align-self: start;
-  margin-top: 0.7em;
-  width: 1.75rem;
-  height: 1px;
-  background: var(--color-rule);
-}
-
-.hint > span {
-  grid-column: 2;
-  text-wrap: balance;
-}
-
-.hintPointer {
-  display: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .hintTouch {
-    display: none;
-  }
-  .hintPointer {
-    display: inline;
-  }
-}
-
 /* ── The runs ───────────────────────────────────────────────────── */
 
 .runs {
@@ -416,14 +378,15 @@
 
 .mark {
   margin-top: 0.9rem;
+  max-width: 21rem;
   font-family: var(--font-display);
   font-style: italic;
-  font-weight: 450;
-  font-variation-settings: "opsz" 60;
-  font-size: clamp(2.2rem, 3.2vw, 2.7rem);
-  line-height: 1;
-  letter-spacing: -0.005em;
+  font-weight: 500;
+  font-size: clamp(2.6rem, 4.4vw, 3.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
   color: var(--color-ink);
+  text-wrap: balance;
 }
 
 .gloss {
@@ -438,12 +401,13 @@
 }
 
 .line {
-  margin-top: 1.05rem;
+  margin-top: 1.1rem;
   max-width: 21rem;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-style: italic;
-  font-size: clamp(1.04rem, 1.2vw, 1.12rem);
-  line-height: 1.5;
+  font-weight: 400;
+  font-size: clamp(1.6rem, 2.3vw, 2.05rem);
+  line-height: 1.25;
   color: var(--color-ink-soft);
   text-wrap: balance;
 }
@@ -610,13 +574,13 @@
   }
 
   .left {
-    grid-template-columns: var(--pw) minmax(0, 19rem);
+    grid-template-columns: var(--pw) minmax(0, 26rem);
     justify-content: start;
     align-items: end;
   }
 
   .right {
-    grid-template-columns: minmax(0, 19rem) var(--pw);
+    grid-template-columns: minmax(0, 26rem) var(--pw);
     justify-content: end;
     align-items: start;
   }
@@ -645,8 +609,9 @@
     align-items: inherit;
   }
 
+  .mark,
   .line {
-    max-width: 19rem;
+    max-width: 28rem;
   }
 }
 

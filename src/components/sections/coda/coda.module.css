@@ -5,6 +5,7 @@
 .root {
   position: relative;
   padding-top: clamp(5.5rem, 14vw, 10rem);
+  padding-bottom: max(clamp(4rem, 12vw, 7rem), calc(env(safe-area-inset-bottom) + 2rem));
 }
 
 /* one column, the width of a letter: the note and the final system share it */
@@ -53,17 +54,17 @@
 }
 
 /* Two lines deep. Its cap top meets the first line's cap height and
-   its baseline sits on the second line's baseline (Bodoni cap height
-   is 0.75em; Newsreader's is 0.67em, ascent 0.735em, descent 0.265em). */
+   its baseline sits on the second line's baseline (Cormorant cap height
+   is 0.625em, ascent 0.924em, descent 0.287em; Newsreader's cap height
+   is 0.67em, ascent 0.735em, descent 0.265em). */
 .dropCap {
   float: left;
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 500;
-  font-variation-settings: "opsz" 48;
-  font-size: 3.053em;
-  line-height: 0.9;
-  margin: 0.06em 0.2em 0 0.045em;
+  font-size: 3.664em;
+  line-height: 0.82;
+  margin: 0 0.167em 0 0.0375em;
   color: var(--color-ink);
   text-indent: 0;
 }
@@ -319,60 +320,6 @@
 
 .daCapo svg {
   flex: none;
-}
-
-/* ── Colophon: the engraver's imprint at the foot of the last page ── */
-
-.colophon {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.1rem;
-  margin-top: clamp(5.5rem, 16vw, 9rem);
-  padding-bottom: max(2.75rem, calc(env(safe-area-inset-bottom) + 1.5rem));
-  text-align: center;
-}
-
-.colophonRule {
-  width: 48px;
-  height: 1px;
-  background: var(--color-rule);
-}
-
-/* ink-soft, not graphite: small text has to read (AA); the faces already
-   stand apart, each set in itself */
-.colophon p {
-  max-width: 22rem;
-  text-wrap: balance;
-  color: var(--color-ink-soft);
-}
-
-.face {
-  letter-spacing: 0;
-  color: var(--color-ink-soft);
-}
-
-.faceBodoni {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 1.12em;
-}
-
-.faceCormorant {
-  font-family: var(--font-heading);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 1.22em;
-}
-
-.faceNewsreader {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 1.1em;
-}
-
-.faceMono {
-  font-family: var(--font-mono);
 }
 
 /* ── Reduced motion: fades only ────────────────────────────── */

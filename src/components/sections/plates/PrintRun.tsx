@@ -338,10 +338,8 @@ export default function PrintRun({ plate, index }: { plate: Plate; index: number
         <p className={s.no}>
           <abbr title={platesCopy.plateWord}>Pl.</abbr> {number}
         </p>
-        <p className={s.mark} lang="it">
-          {plate.mark}
-        </p>
-        <p className={s.gloss}>{plate.gloss}</p>
+        <p className={s.mark}>{plate.mark}</p>
+        {plate.gloss && <p className={s.gloss}>{plate.gloss}</p>}
         <p className={s.line}>{plate.line}</p>
         <div className={s.state}>
           <p className={s.impression}>{state}</p>

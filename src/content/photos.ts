@@ -20,10 +20,10 @@ export interface PlatePhoto {
 
 export interface Plate {
   id: string;
-  /** the Italian marking, printed large */
+  /** the verse, printed large */
   mark: string;
-  /** its meaning, printed small */
-  gloss: string;
+  /** an optional note beneath it, printed small */
+  gloss?: string;
   line: string;
   /** one photo, or two for a pair */
   photos: PlatePhoto[];
@@ -50,31 +50,27 @@ const p = (name: string, width: number, height: number, alt: string, label?: str
 
 export const PLATES: Plate[] = [
   {
-    id: "scherzando",
-    mark: "Scherzando",
-    gloss: "playfully",
-    line: "Holding a tiny paper umbrella like it’s the most serious thing in the world. I’ve looked at this one more times than I’ll admit.",
+    id: "four-days",
+    mark: "I can admire you for four days",
+    line: "Spring, summer, autumn and winter.",
     photos: [p("scherzando", 500, 860, "Pavithraa smiling, holding a tiny paper cocktail umbrella")],
   },
   {
-    id: "dolce",
-    mark: "Dolce",
-    gloss: "sweetly",
-    line: "A dress covered in stars, and not one person is looking at the stars.",
+    id: "three-days",
+    mark: "Maybe three",
+    line: "Yesterday, today and tomorrow.",
     photos: [p("dolce", 548, 930, "Pavithraa in a blue dress with small gold stars, smiling, one hand in her hair")],
   },
   {
-    id: "notturno",
-    mark: "Notturno",
-    gloss: "a night piece",
-    line: "It was dark out and you still lit up the photo. Next time, look this way.",
+    id: "two-days",
+    mark: "How about two?",
+    line: "Day and night.",
     photos: [p("notturno", 620, 897, "Pavithraa at night in a white T-shirt and jeans, looking to one side")],
   },
   {
-    id: "amoroso",
-    mark: "Amoroso",
-    gloss: "lovingly",
-    line: "Nobody had to tell me how to look at this one.",
+    id: "one-day",
+    mark: "Maybe one day is enough",
+    line: "Every day.",
     photos: [p("amoroso", 676, 1160, "Pavithraa smiling on a terrace in a sage-green kurta, hands folded")],
   },
 ];

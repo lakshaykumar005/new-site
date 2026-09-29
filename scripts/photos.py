@@ -76,7 +76,7 @@ def plate(name, photo, crop=None, width=1100):
 
 
 frontispiece("her-cutout.png", "her.jpg", (70, 58, 590, 700))
-plate("scherzando", "her-2.jpg", (0, 0, 500, 860))
+plate("I can admire you for 4 days", "her-2.jpg", (0, 0, 500, 860))
 plate("dolce", "her-3.jpg", (0, 0, 548, 930))
 plate("notturno", "IMG_4735.jpg", (300, 20, 920, 917))
 plate("amoroso", "her.jpg", (0, 40, 676, 1200))

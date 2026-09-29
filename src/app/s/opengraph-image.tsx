@@ -54,7 +54,7 @@ function staffSvg(): string {
 
 export default async function Image() {
   const [title, mono, serif] = await Promise.all([
-    font("BodoniModa-Italic-48-500.ttf"),
+    font("CormorantGaramond-Italic-500.woff"),
     font("DMMono-Regular.ttf"),
     font("Newsreader-Italic-24-400.ttf"),
   ]);
@@ -81,14 +81,14 @@ export default async function Image() {
           </div>
           <div
             style={{
-              fontFamily: "Bodoni",
+              fontFamily: "Cormorant",
               fontStyle: "italic",
               fontSize: 60,
               lineHeight: 1.1,
               color: INK,
               textAlign: "center",
               marginTop: 26,
-              maxWidth: 900,
+              maxWidth: 960,
             }}
           >
             {arrived.title}
@@ -107,7 +107,7 @@ export default async function Image() {
     {
       ...size,
       fonts: [
-        { name: "Bodoni", data: title, weight: 500, style: "italic" },
+        { name: "Cormorant", data: title, weight: 500, style: "italic" },
         { name: "DM Mono", data: mono, weight: 400, style: "normal" },
         { name: "Newsreader", data: serif, weight: 400, style: "italic" },
       ],

@@ -46,7 +46,7 @@ const subscribeNothing = () => () => {};
  * waits for the three faces the page is set in, then lets the title
  * appear (and the staff draw). Gives up waiting after 1.5s.
  */
-const FONT_GATE = `(function(){var s=document.currentScript,el=s&&s.parentNode;if(!el)return;var d=0;function go(){if(d)return;d=1;el.setAttribute("data-fonts","")}setTimeout(go,1500);try{var c=getComputedStyle(document.documentElement),f=document.fonts;Promise.all([f.load("italic 500 1em "+c.getPropertyValue("--font-bodoni")),f.load("italic 400 1em "+c.getPropertyValue("--font-newsreader")),f.load("400 1em "+c.getPropertyValue("--font-dm-mono"))]).then(go,go)}catch(e){go()}})();`;
+const FONT_GATE = `(function(){var s=document.currentScript,el=s&&s.parentNode;if(!el)return;var d=0;function go(){if(d)return;d=1;el.setAttribute("data-fonts","")}setTimeout(go,1500);try{var c=getComputedStyle(document.documentElement),f=document.fonts;Promise.all([f.load("italic 500 1em "+c.getPropertyValue("--font-cormorant")),f.load("italic 400 1em "+c.getPropertyValue("--font-newsreader")),f.load("400 1em "+c.getPropertyValue("--font-dm-mono"))]).then(go,go)}catch(e){go()}})();`;
 
 function waitForFonts(el: HTMLElement): () => void {
   let done = false;
@@ -60,7 +60,7 @@ function waitForFonts(el: HTMLElement): () => void {
     const cs = getComputedStyle(document.documentElement);
     const f = document.fonts;
     Promise.all([
-      f.load(`italic 500 1em ${cs.getPropertyValue("--font-bodoni")}`),
+      f.load(`italic 500 1em ${cs.getPropertyValue("--font-cormorant")}`),
       f.load(`italic 400 1em ${cs.getPropertyValue("--font-newsreader")}`),
       f.load(`400 1em ${cs.getPropertyValue("--font-dm-mono")}`),
     ]).then(go, go);
@@ -202,7 +202,7 @@ export default function TitlePage() {
   // re-seat the notes if the browser's advances differ from the table.
   useEffect(() => {
     let alive = true;
-    const family = getComputedStyle(document.documentElement).getPropertyValue("--font-bodoni");
+    const family = getComputedStyle(document.documentElement).getPropertyValue("--font-cormorant");
     document.fonts
       .load(`italic 500 1em ${family}`)
       .then(() => {

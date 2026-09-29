@@ -19,11 +19,6 @@ export default function Plates() {
             {platesCopy.title}
           </h2>
           <p className={`t-lede measure ${s.lede}`}>{platesCopy.lede}</p>
-          <p className={`t-caption ${s.hint}`}>
-            <span>{platesCopy.pressHint}</span>
-            <span className={s.hintTouch}>{platesCopy.touchHint}.</span>
-            <span className={s.hintPointer}>{platesCopy.pointerHint}.</span>
-          </p>
         </header>
 
         <ol className={s.runs}>
