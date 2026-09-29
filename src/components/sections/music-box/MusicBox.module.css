@@ -1,0 +1,410 @@
+/* ── Fig. 2: the mechanism ─────────────────────────────────
+   One ink — blue-black linework on warm paper — with
+   vermillion kept for whatever is sounding.                   */
+
+/* Two plates (see geometry.ts). The compact one is the default: phones,
+   and phones on their side, where the wide plate would be taller than
+   the screen. The wide plate wants 768px and the height to show it
+   whole — or a mouse. Keep WIDE_QUERY in MusicBox.tsx in step with the
+   one media query below. */
+
+.figureWrap {
+  position: relative;
+  margin-top: clamp(2.5rem, 7vw, 4rem);
+  /* compact: the strip runs from edge to edge */
+  margin-inline: calc(var(--gutter) * -1);
+  /* narrow phones get a line more under the pill: the note's column is
+     narrower there, and the hint or a count can take three lines */
+  --mb-extra: 0px;
+}
+@media (max-width: 374.98px) {
+  .figureWrap {
+    --mb-extra: 22px;
+  }
+}
+
+.figure {
+  position: relative;
+  height: calc(var(--mb-h-compact-fine) + var(--mb-extra));
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+@media (pointer: coarse) {
+  .figure {
+    height: calc(var(--mb-h-compact) + var(--mb-extra));
+  }
+}
+/* focus is shown where the keys act — a ring round the handle's grip —
+   not as a box round the whole plate */
+.figure:focus-visible {
+  outline: none;
+}
+.focusRing {
+  fill: none;
+  stroke: var(--color-vermillion);
+  stroke-width: 1.5;
+  opacity: 0;
+  transition: opacity var(--dur-micro) var(--ease-out);
+}
+.figure:focus-visible .focusRing {
+  opacity: 1;
+}
+
+.layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.rotor {
+  position: absolute;
+  overflow: visible;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.paper {
+  position: absolute;
+  overflow: hidden;
+  background: var(--color-paper-raised);
+  pointer-events: none;
+}
+
+.tape {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+  will-change: transform;
+}
+
+/* ── the name above the strip ─────────────────────────────── */
+.name {
+  position: absolute;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "opsz" 30;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: var(--color-ink);
+  pointer-events: none;
+}
+.letter {
+  display: inline-block;
+  color: var(--color-ink);
+}
+
+/* ── hands on ─────────────────────────────────────────────── */
+.hitStrip {
+  position: absolute;
+  cursor: grab;
+  /* horizontal pulls move the paper; vertical swipes still scroll the page */
+  touch-action: pan-y;
+}
+.hitCrank {
+  position: absolute;
+  border-radius: 999px;
+  cursor: grab;
+  touch-action: none;
+}
+.grabbing,
+.grabbing .hitStrip,
+.grabbing .hitCrank {
+  cursor: grabbing;
+}
+
+/* compact: the pill on the handle's axle line, the note beneath it */
+.controls {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+.controls :global(.btn-play) {
+  flex: none;
+  min-width: 11.25rem;
+  white-space: nowrap;
+}
+/* the narrowest phones: set a little tighter, so the handle keeps its size
+   (geometry.ts counts on this width: 10.5rem) */
+@media (max-width: 359.98px) {
+  .controls :global(.btn-play) {
+    min-width: 10.5rem;
+    gap: 0.6rem;
+    padding-right: 1.05rem;
+    letter-spacing: 0.08em;
+  }
+}
+.disc svg {
+  display: block;
+}
+.hint {
+  max-width: 34rem;
+  color: var(--color-ink-soft);
+  text-wrap: pretty;
+}
+
+.note {
+  min-width: 0;
+}
+
+/* ── counting the passes (it takes the hint's place) ─────── */
+.countLine {
+  max-width: 24rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 450;
+  font-variation-settings: "opsz" 30;
+  font-size: 1.06rem;
+  line-height: 1.3;
+  color: var(--color-ink);
+  text-wrap: balance;
+  animation: mb-fade var(--dur-reveal) var(--ease-out) both;
+}
+
+/* ── the wide plate ───────────────────────────────────────── */
+@media (min-width: 768px) and (min-height: 560px), (min-width: 768px) and (pointer: fine) {
+  .figureWrap {
+    margin-inline: 0;
+  }
+  .figure {
+    height: var(--mb-h-wide);
+  }
+  /* a row under the strip; the note's first line keeps to the pill's
+     centre and any second line runs on below it */
+  .controls {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+  .hint {
+    margin-top: calc((48px - 1.5em) / 2);
+  }
+  .countLine {
+    font-size: 1.22rem;
+    max-width: 30rem;
+    margin-top: calc((48px - 1.3em) / 2);
+  }
+}
+@keyframes mb-fade {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 5px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .countLine {
+    animation-name: mb-fade-only;
+    animation-duration: var(--dur-ui);
+  }
+}
+@keyframes mb-fade-only {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ── the key, under the figure ────────────────────────────── */
+.key {
+  margin-top: clamp(1.75rem, 4vw, 2.5rem);
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--color-rule);
+  display: grid;
+  gap: 0.95rem;
+  list-style: none;
+  padding-left: 0;
+}
+@media (min-width: 1024px) {
+  .key {
+    grid-template-columns: max-content max-content minmax(0, 1fr);
+    column-gap: 3rem;
+  }
+}
+.keyItem {
+  display: grid;
+  grid-template-columns: 1.75rem 1fr;
+  column-gap: 0.75rem;
+  align-items: baseline;
+  font-family: var(--font-serif);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+  text-wrap: pretty;
+}
+.keyNum {
+  display: inline-grid;
+  place-items: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 999px;
+  border: 0.75px solid var(--color-ink-soft);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.82rem;
+  line-height: 1;
+  color: var(--color-ink);
+  transform: translateY(0.12rem);
+}
+.keyPart {
+  color: var(--color-ink);
+}
+
+/* ── inks ─────────────────────────────────────────────────── */
+.line {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-linejoin: round;
+}
+.shade {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.partFill {
+  fill: var(--color-paper-raised);
+  stroke: none;
+}
+.paperFill {
+  fill: var(--color-paper-raised);
+}
+.inkFill {
+  fill: var(--color-ink);
+}
+.bed {
+  fill: var(--color-paper-deep);
+}
+.paperShadow {
+  fill: var(--color-paper-deep);
+}
+.hatch {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 0.45;
+  opacity: 0.42;
+}
+.spoke {
+  fill: var(--color-paper-raised);
+  stroke: var(--color-ink);
+  stroke-linejoin: round;
+}
+.centreLine {
+  fill: none;
+  stroke: var(--color-graphite);
+  stroke-width: 0.5;
+  stroke-dasharray: 9 2.5 1.5 2.5;
+}
+
+/* the strip's printing */
+.row {
+  fill: none;
+  stroke: var(--color-rule);
+  stroke-width: 0.6;
+}
+.beat {
+  fill: none;
+  stroke: var(--color-graphite);
+  stroke-width: 0.5;
+  stroke-dasharray: 1 2.5;
+  opacity: 0.55;
+}
+.bar {
+  fill: none;
+  stroke: var(--color-graphite);
+  stroke-width: 0.7;
+  opacity: 0.75;
+}
+.seamFill {
+  fill: var(--color-paper-deep);
+  opacity: 0.7;
+}
+.seamLine {
+  fill: none;
+  stroke: var(--color-graphite);
+  stroke-width: 0.5;
+}
+.hole {
+  fill: var(--color-ink);
+}
+.indexRule {
+  fill: none;
+  stroke: var(--color-graphite);
+  stroke-width: 0.6;
+}
+.indexText {
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+  fill: var(--color-ink-soft);
+}
+
+/* the comb's teeth ring about their roots */
+.tooth {
+  color: var(--color-ink);
+  transform-box: fill-box;
+  transform-origin: 0% 50%;
+}
+.toothFill {
+  fill: var(--color-paper-raised);
+}
+/* vermillion only while it sounds */
+.toothInk {
+  fill: var(--color-vermillion);
+  opacity: 0;
+}
+.strikeDisc {
+  fill: var(--color-vermillion);
+  opacity: 0;
+}
+.strikeRing {
+  fill: none;
+  stroke: var(--color-vermillion);
+  stroke-width: 0.9;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.toothLine {
+  fill: none;
+  stroke: currentColor;
+  stroke-linejoin: round;
+}
+
+/* reference numerals */
+.leader {
+  fill: none;
+  stroke: var(--color-ink-soft);
+  stroke-width: 0.6;
+}
+.leaderDot {
+  fill: var(--color-ink-soft);
+}
+.arrowHead {
+  fill: var(--color-ink-soft);
+}
+.numeralRing {
+  fill: var(--color-paper);
+  stroke: var(--color-ink-soft);
+  stroke-width: 0.75;
+}
+.numeralText {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  fill: var(--color-ink);
+}
