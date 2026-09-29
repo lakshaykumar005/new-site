@@ -237,8 +237,10 @@ export const frontispiece = {
   ],
   lead: "Pick up the glass and read. Start with the smile — it took the most words.",
   caption: "The theme, drawn from life.",
-  engravedNote: (lines: number, words: number) =>
-    `Engraved in ${lines} lines of ink — ${words.toLocaleString("en")} words — from a photograph.`,
+  engravedNote: (lines: number, words?: number) =>
+    typeof words === "number" && words > 0
+      ? `Engraved in ${lines} lines of ink — ${words.toLocaleString("en")} words — from a photograph.`
+      : `Engraved in ${lines} lines of ink from a photograph.`,
   hintTouch: "Drag the glass by its handle. Three sentences are hidden in there.",
   hintPointer: "Drag the glass, or focus it and use the arrow keys. Three sentences are hidden in there.",
   glassLabel: "Magnifying glass. Use the arrow keys to move it over the portrait.",
