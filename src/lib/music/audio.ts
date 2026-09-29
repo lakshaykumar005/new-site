@@ -35,7 +35,11 @@ class MusicBoxEngine {
   private listeners = new Set<Listener>();
   private recent: number[] = [];
   private _muted = false;
-  private _unlocked = false;
+  /** a gesture has started audio at least once */
+  private everUnlocked = false;
+  /** we suspended it ourselves because the page was hidden */
+  private hiddenSuspend = false;
+  private rearmed = false;
   private visibilityBound = false;
 
   constructor() {
@@ -52,14 +56,14 @@ class MusicBoxEngine {
     return this._muted;
   }
 
-  /** true once a gesture has started a running AudioContext */
+  /** true while a gesture-started AudioContext is running */
   get unlocked() {
-    return this._unlocked;
+    return this.everUnlocked && this.ctx?.state === "running";
   }
 
   /** true when a note played now would actually be heard */
   get audible() {
-    return this._unlocked && !this._muted && this.ctx?.state === "running";
+    return this.unlocked && !this._muted;
   }
 
   subscribe = (fn: Listener) => {
@@ -120,7 +124,9 @@ class MusicBoxEngine {
       this.ctx = new AC({ latencyHint: "interactive" });
       this.build();
       this.ctx.onstatechange = () => {
-        this._unlocked = this.ctx?.state === "running";
+        const state = this.ctx?.state as string | undefined;
+        // iOS "interrupts" audio (a call, Siri, another app); resume on the next touch
+        if (this.everUnlocked && state !== "running" && state !== "closed" && !this.hiddenSuspend) this.rearm();
         this.emit();
       };
     }
@@ -142,18 +148,42 @@ class MusicBoxEngine {
         /* ignore */
       }
     }
-    this._unlocked = ctx.state === "running";
+    if (ctx.state === "running") this.everUnlocked = true;
     this.bindVisibility();
     this.emit();
+  }
+
+  /** One quiet listener: the next tap or key wakes a context the system put to sleep. */
+  private rearm() {
+    if (this.rearmed || typeof window === "undefined") return;
+    this.rearmed = true;
+    const wake = () => {
+      window.removeEventListener("pointerdown", wake, true);
+      window.removeEventListener("keydown", wake, true);
+      this.rearmed = false;
+      if (this.ctx && this.ctx.state !== "running") void this.ctx.resume().catch(() => {});
+    };
+    window.addEventListener("pointerdown", wake, true);
+    window.addEventListener("keydown", wake, true);
   }
 
   private bindVisibility() {
     if (this.visibilityBound) return;
     this.visibilityBound = true;
     document.addEventListener("visibilitychange", () => {
-      if (!this.ctx) return;
-      if (document.hidden) void this.ctx.suspend().catch(() => {});
-      else if (this._unlocked) void this.ctx.resume().catch(() => {});
+      const ctx = this.ctx;
+      if (!ctx) return;
+      if (document.hidden) {
+        if (ctx.state === "running") {
+          this.hiddenSuspend = true;
+          void ctx.suspend().catch(() => {});
+        }
+      } else if (this.hiddenSuspend) {
+        this.hiddenSuspend = false;
+        // coming back: pick up where we left off (or wait for the next touch)
+        void ctx.resume().catch(() => {});
+        if (ctx.state !== "running") this.rearm();
+      }
     });
   }
 
@@ -183,7 +213,17 @@ class MusicBoxEngine {
     const wet = ctx.createGain();
     wet.gain.value = 0.24;
     const verb = ctx.createConvolver();
-    verb.buffer = this.impulse(2.4, 3.1);
+    // the room is built just after the first tap, not inside it, so that
+    // tap never stutters; the dry signal plays in the meantime
+    const buildRoom = () => {
+      try {
+        verb.buffer = this.impulse(2.2, 3.1);
+      } catch {
+        /* no room, then: dry only */
+      }
+    };
+    if ("requestIdleCallback" in window) window.requestIdleCallback(buildRoom, { timeout: 400 });
+    else setTimeout(buildRoom, 60);
 
     bus.connect(tone);
     tone.connect(dry);
