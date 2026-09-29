@@ -282,3 +282,67 @@ plain fermata `Divider` when the slot is `null`. Set like the epigraph at the he
 movement: centred, `text` in Bodoni italic (~1.5–2rem, balanced), `by` beneath after an em
 dash in DM Mono caps (small, ink-soft), and `reply` (if any) beneath that in Newsreader
 (ink-soft). Hairline rules above and below, generous vertical space; `.reveal`.
+
+## Revised: pages 5 and 6 (the user rejected the static versions — "revamp with proper animation and transitions effects, with a lot of things which are very different")
+
+### 5. Variations — "The Kaleidoscope" — `/variations`
+
+Replace the six stacked systems with ONE instrument. Keep `variationsCopy` (kicker, title,
+lede, the six `items` with mark/title/line, todaysPick, play/stop) — add new keys only.
+
+- **The dial.** Six tempo markings (`items[*].mark`, Bodoni italic) sit around a ring like the
+  bezel of a watch or the ring of a music-box cylinder; the current one sits at the top, in
+  ink; the others fade to graphite. She turns it by dragging round it (pointer capture,
+  `touch-action: none` on the ring only), by a horizontal swipe on the staff, with ← / →, or
+  by tapping a marking. It snaps to the nearest position with a spring; every detent gives
+  `musicBox.tick()` + `haptic(4)`.
+- **The morph.** One engraved staff (`ScoreLine`-quality notation: clef, time signature, note
+  heads, stems, flags, dots, barlines — reuse `layoutScore` for the geometry of each variation
+  and animate between the two layouts) shows the current variation. Turning the dial
+  MORPHS it into the next over ~700ms: each note glides to its new x/y (notes are matched
+  by their `letter` index so her letters travel with their notes), stems re-orient, the time
+  signature crossfades, barlines slide. Retrograde: the notes run the staff backwards
+  (matched letters cross past each other). Inversion: a mirror line appears on the middle
+  staff line and the melody flips over it. Waltz: the staff swings gently on the bass (a
+  slight 3-beat sway while playing). Lullaby: the whole plate dims to a night print (ink
+  paper, pale lines) and the notes slow. Allegro: the notes quicken and the staff brightens.
+  Use the Web Animations API / rAF with the `--ease-spring` and `--ease-out` curves.
+- **Playing.** One play disc (vermillion) plays the current variation via `useScorePlayer`;
+  the playhead runs, notes light vermillion as they sound, and turning the dial mid-play
+  hands the playhead to the new variation at the same beat fraction (no stop/restart).
+- **Her letters** under the notes travel with their notes during a morph.
+- Under the instrument: `title` (t-heading) and `line` (t-body) of the current variation,
+  crossfading (old slides out up, new slides in from below, 320ms). "Today's pick" is a small
+  vermillion tick on that marking of the dial.
+- Phone: the ring is ~280px wide, the staff full-bleed below it, the text below that.
+  Desktop: ring left, staff + text right, both vertically centred, one screen tall.
+- Reduced motion: no morph (instant swap with a 200ms crossfade), no sway.
+
+### 6. Plates — "The Print Room" — `/plates`
+
+Replace the stacked plates with a printing press. Keep `platesCopy` and `PLATES` — add new
+keys only.
+
+- **Each plate is a print run.** A plate mark (the debossed rectangle) sits empty on the page.
+  As it scrolls into view (IntersectionObserver, once): an ink roller (an SVG cylinder with a
+  handle, drawn as a patent illustration) rolls across the plate left→right (900ms,
+  `--ease-in-out`) leaving the plate inked (the duotone fades up behind it); then a sheet of
+  paper (a `paper-raised` rectangle with a hairline edge and a soft curl) lies on the plate and
+  is PULLED OFF from one corner (a diagonal wipe via `clip-path` polygon, 1100ms) revealing
+  the print (the duotone) on the sheet — the sheet is what stays on the page, slightly
+  rotated (±1.5°) like a print left to dry, with a small "Pl. n" and the caption beneath.
+  Touch / hover the print → colour blooms in from the touch point (a radial `mask-image`
+  growing from the pointer position, 700ms) — hand-tinting; touch again → back to ink.
+- **The crescendo pair** is one long pull: two prints on one wide sheet, the hairpin drawn
+  between them as the pull passes it, `cresc.` in italic.
+- Between print runs, small marginalia: the plate number, the marking (`mark`, Bodoni
+  italic, large), the gloss (DM Mono caps) and `line` (Newsreader italic) — laid out as a
+  colophon beside the print on desktop, beneath it on phone.
+- Ambient: nothing moves until scrolled to; the roller and the pull happen once per plate;
+  a "Print again" (small `.btn-quiet`) re-runs a plate's print. Reduced motion: the print
+  simply fades in (400ms); tint is an instant swap.
+- Images: plain `<img>` with width/height, lazy, async, alt from the data; never upscaled.
+
+Both pages: zero console errors, no horizontal overflow, 60fps (transform/opacity/clip-path
+only in animations; no layout thrash), keyboard operable, and every animation honours
+`prefers-reduced-motion`.
