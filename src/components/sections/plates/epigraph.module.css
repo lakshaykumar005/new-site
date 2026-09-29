@@ -1,0 +1,81 @@
+/* An epigraph between two sections, set the way a quotation is set at
+   the head of a movement: centred, in italic, between two hairlines,
+   with the source small beneath it — and, now and then, an answer.   */
+
+.epigraph {
+  padding-block: clamp(1.5rem, 5vw, 3rem);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 34rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.inner::before,
+.inner::after {
+  content: "";
+  display: block;
+  width: clamp(4.5rem, 18vw, 7rem);
+  height: 1px;
+  background: var(--color-rule);
+}
+
+.inner::before {
+  margin-bottom: clamp(2.25rem, 7vw, 3.25rem);
+}
+
+.inner::after {
+  margin-top: clamp(2.25rem, 7vw, 3.25rem);
+}
+
+.figure {
+  margin: 0;
+}
+
+.text {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 450;
+  font-variation-settings: "opsz" 60;
+  font-size: clamp(1.6rem, 4.8vw, 2.05rem);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  color: var(--color-ink);
+  text-wrap: balance;
+}
+
+.by {
+  margin-top: 1.15rem;
+  margin-right: -0.16em; /* the tracking after the last letter */
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1.5;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  text-wrap: balance;
+}
+
+/* a true em dash (the monospace one is stubby), then a word space */
+.dash {
+  margin-right: 0.55em;
+  font-family: var(--font-serif);
+  font-size: 1.3em;
+  line-height: 0;
+  letter-spacing: 0;
+  vertical-align: -0.02em;
+}
+
+.reply {
+  margin-top: 1.6rem;
+  font-family: var(--font-serif);
+  font-size: clamp(1.06rem, 1.4vw, 1.15rem);
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+  text-wrap: balance;
+}
