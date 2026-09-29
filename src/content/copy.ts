@@ -230,13 +230,40 @@ export const epigraphs: Record<
 
 export const frontispiece = {
   kicker: "Frontispiece",
+  title: "Written, not drawn",
+  paragraphs: [
+    "Old scores open with a portrait facing the title page, cut into copper by an engraver with a very steady hand. Yours is cut in words.",
+    `Every line of ink in it is a line of text — your name, the ${N} notes it makes, and a few sentences I wrote while it was being made. From arm’s length they’re only shading. Up close, they’re for you.`,
+  ],
+  lead: "Pick up the glass and read. Start with the smile — it took the most words.",
   caption: "The theme, drawn from life.",
-  engravedNote: (lines: number) =>
-    `Engraved in ${lines} lines of ink from a photograph. Touch the plate to see it.`,
+  engravedNote: (lines: number, words: number) =>
+    `Engraved in ${lines} lines of ink — ${words.toLocaleString("en")} words — from a photograph.`,
+  hintTouch: "Drag the glass by its handle. Three sentences are hidden in there.",
+  hintPointer: "Drag the glass, or focus it and use the arrow keys. Three sentences are hidden in there.",
+  glassLabel: "Magnifying glass. Use the arrow keys to move it over the portrait.",
+  showPhoto: "Show the photograph",
+  showEngraving: "Back to the engraving",
   photoCaption: "The photograph it was drawn from.",
-  photoNote: "Touch it again for the engraving.",
-  toggleLabel: "Show the photograph the engraving was made from",
-  toggleBackLabel: "Show the engraving again",
+  // ⚙️ The words the portrait is written in, in reading order. They repeat
+  // until every line is full. Add your own lines anywhere in this list.
+  microText: [
+    HER_NAME,
+    NAME_FACTS.notes.map((n) => n.note).join(" "),
+    "This portrait is not drawn. It is written",
+    "Every line of ink is a line of words, and every word is about you",
+    "If you are reading this, you found the glass. Most people never look this closely",
+    `Composed by whoever named you. Transcribed, very carefully, by ${FROM_NAME}`,
+    `${capitalize(N)} letters, ${N} notes, and a smile that took more lines than anything else here`,
+    "Turn the page when you are ready. The music is waiting",
+  ],
+  // ⚙️ Sentences set at a particular place in the portrait (u = across,
+  // v = down, 0–1). The glass starts over the first one.
+  hidden: [
+    { text: "That smile took more words than anything else on this page", u: 0.41, v: 0.458 },
+    { text: "Look who is looking back", u: 0.42, v: 0.335 },
+    { text: "I really like talking to you", u: 0.73, v: 0.6 },
+  ],
 };
 
 export const platesCopy = {
