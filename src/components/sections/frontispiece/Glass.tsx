@@ -32,7 +32,6 @@ export default function Glass({ micro, family, W, H, start, label }: GlassProps)
   const root = useRef<HTMLDivElement>(null);
 
   const D = W < 380 ? 136 : W < 440 ? 150 : 188;
-  const R = D / 2;
   const M = micro ? Math.max(2.6, LENS_TEXT_PX / micro.size) : 4;
   // the handle swings to whichever side keeps it on the page
   const handleLeft = pos.u > 0.5;
@@ -65,8 +64,9 @@ export default function Glass({ micro, family, W, H, start, label }: GlassProps)
   // the lens may overhang the oval's edge a little, never leave it: it
   // should always have words under it, never bare paper
   const clamp = (u: number, v: number) => {
-    const ax = Math.max(0.05, 0.485 - (0.45 * R) / W);
-    const ay = Math.max(0.05, 0.485 - (0.45 * R) / H);
+    const r = D / 2;
+    const ax = Math.max(0.05, 0.485 - (0.45 * r) / W);
+    const ay = Math.max(0.05, 0.485 - (0.45 * r) / H);
     const du = u - 0.5;
     const dv = v - 0.5;
     const d = Math.hypot(du / ax, dv / ay);
@@ -114,6 +114,7 @@ export default function Glass({ micro, family, W, H, start, label }: GlassProps)
     setPos((p) => clamp(p.u + m[0], p.v + m[1]));
   };
 
+  const R = D / 2;
   const handleLen = D * 0.62;
   const handleW = D * 0.13;
 
