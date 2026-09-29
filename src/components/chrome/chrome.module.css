@@ -1,0 +1,261 @@
+/* ── The running head (top left): opens the contents ───────── */
+.head {
+  position: fixed;
+  z-index: 50;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 44px;
+  max-width: calc(100vw - 88px);
+  padding: 0 0.95rem 0 0.8rem;
+  border: 1px solid var(--color-rule);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-paper-raised) 80%, transparent);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  color: var(--color-ink);
+  transition: border-color var(--dur-ui) var(--ease-out);
+  view-transition-name: running-head;
+}
+.head:hover {
+  border-color: var(--color-ink-soft);
+}
+.headCompact {
+  width: 44px;
+  padding: 0;
+  justify-content: center;
+}
+
+.headGlyph {
+  display: grid;
+  gap: 3px;
+  width: 14px;
+}
+.headGlyph span {
+  display: block;
+  height: 1px;
+  background: currentColor;
+}
+
+.headText {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.headNo {
+  color: var(--color-ink-soft);
+}
+.headTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── The contents ─────────────────────────────────────────── */
+.contents {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.contents::backdrop {
+  background: transparent;
+}
+.contents[open] {
+  animation: contents-in 420ms var(--ease-out) both;
+}
+@keyframes contents-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.contentsInner {
+  width: 100%;
+  max-width: 40rem;
+  margin-inline: auto;
+  padding: max(14px, env(safe-area-inset-top)) var(--gutter) max(3rem, env(safe-area-inset-bottom));
+}
+
+.contentsTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 44px;
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 1px solid var(--color-rule);
+  border-radius: 999px;
+  background: var(--color-paper-raised);
+  color: var(--color-ink);
+}
+
+.contentsTitle {
+  margin-top: clamp(2.5rem, 9vh, 5rem);
+  margin-bottom: clamp(1.5rem, 5vh, 2.5rem);
+}
+
+.toc {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--color-rule);
+}
+.toc li {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule) 55%, transparent);
+}
+
+.tocRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  min-height: 56px;
+  padding: 0.95rem 0.1rem 0.8rem;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+.tocRow:hover .tocTitle {
+  color: var(--color-ink-soft);
+}
+
+.tocTitle {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.65rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 450;
+  font-variation-settings: "opsz" 40;
+  font-size: clamp(1.35rem, 4.6vw, 1.7rem);
+  line-height: 1.15;
+  transition: color var(--dur-ui) var(--ease-out);
+}
+
+.tocLabel,
+.tocHere {
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+.tocHere {
+  color: var(--color-vermillion-deep);
+}
+
+.tocLeader {
+  flex: 1;
+  min-width: 1.5rem;
+  border-bottom: 1.5px dotted color-mix(in srgb, var(--color-graphite) 75%, transparent);
+  transform: translateY(-0.3em);
+}
+
+.tocNo {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── The page turner (foot of every page) ─────────────────── */
+.turn {
+  padding-top: clamp(2.5rem, 8vw, 4rem);
+  padding-bottom: max(2.25rem, calc(env(safe-area-inset-bottom) + 1.25rem));
+}
+
+.turnRule {
+  height: 1px;
+  background: var(--color-rule);
+}
+
+.turnRow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 1.1rem;
+}
+
+.turnPrev,
+.turnNext {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-height: 44px;
+  justify-content: center;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+.turnPrev {
+  justify-self: start;
+  align-items: flex-start;
+}
+.turnNext {
+  justify-self: end;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.turnLabel {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+.turnTitle {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 450;
+  font-variation-settings: "opsz" 32;
+  font-size: clamp(1.05rem, 3.4vw, 1.3rem);
+  line-height: 1.2;
+  transition: color var(--dur-ui) var(--ease-out);
+}
+.turnNext .turnTitle {
+  font-size: clamp(1.2rem, 4vw, 1.55rem);
+}
+.turnPrev:hover .turnTitle,
+.turnNext:hover .turnTitle {
+  color: var(--color-ink-soft);
+}
+
+.folio {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 18;
+  font-size: 0.95rem;
+  color: var(--color-ink-soft);
+  font-variant-numeric: lining-nums;
+  white-space: nowrap;
+}
