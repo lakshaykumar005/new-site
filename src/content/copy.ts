@@ -47,7 +47,7 @@ export const titlePage = {
   credits: [`Composed by whoever named you`, `Transcribed by ${FROM_NAME}`],
   play: "Hear your name",
   soundHint: "Sound on, if you can",
-  after: ["That was your name.", "Every letter, one note. Scroll, and I’ll show you the trick."],
+  after: ["That was your name.", "Every letter, one note. Turn the page, and I’ll show you the trick."],
   again: "Once more",
   mutedNote: "Sound is off — the notes still move. Tap the speaker, top right, to hear them.",
   welcomeBack: "Welcome back. It’s still in tune.",
