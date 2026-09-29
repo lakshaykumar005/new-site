@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bodoni_Moda, DM_Mono, Newsreader } from "next/font/google";
+import Contents from "@/components/chrome/Contents";
+import PageGestures from "@/components/chrome/PageGestures";
 import RevealObserver from "@/components/chrome/RevealObserver";
 import SoundToggle from "@/components/chrome/SoundToggle";
 import { HER_NAME, SITE_DESCRIPTION, SITE_TITLE } from "@/content/site";
@@ -61,11 +63,13 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${bodoni.variable} ${newsreader.variable} ${dmMono.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${bodoni.variable} ${newsreader.variable} ${dmMono.variable}`}>
       <body>
+        <Contents />
         <SoundToggle />
         {children}
         <RevealObserver />
+        <PageGestures />
       </body>
     </html>
   );
