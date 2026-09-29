@@ -1,0 +1,422 @@
+/* ── Coda: the last page of the score ──────────────────────────
+   A letter, then the final system: brace, clefs, a rolled chord
+   held under a fermata, a double barline, and Fine.            */
+
+.root {
+  position: relative;
+  padding-top: clamp(5.5rem, 14vw, 10rem);
+}
+
+/* one column, the width of a letter: the note and the final system share it */
+.col {
+  max-width: 36rem;
+  margin-inline: auto;
+}
+
+/* ── Heading ───────────────────────────────────────────────── */
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.75em;
+}
+
+.codaSign {
+  flex: none;
+  width: 1.5em;
+  height: 1.5em;
+  margin-block: -0.4em;
+  color: var(--color-ink);
+}
+
+.title {
+  margin-top: 1rem;
+}
+
+/* ── The letter ─────────────────────────────────────────────
+   Set in italic — the typographer's way of saying "in his own
+   hand" — ragged, indented like a letter, with a drop cap.   */
+
+.letter {
+  margin-top: clamp(2.5rem, 8vw, 3.75rem);
+}
+
+.para {
+  font-style: italic;
+  /* a touch larger than body text on big screens: this is the one to read slowly */
+  font-size: clamp(1.0625rem, 0.95rem + 0.35vw, 1.25rem);
+  line-height: 1.62;
+}
+
+.para + .para {
+  text-indent: 1.6em;
+}
+
+/* Two lines deep. Its cap top meets the first line's cap height and
+   its baseline sits on the second line's baseline (Bodoni cap height
+   is 0.75em; Newsreader's is 0.67em, ascent 0.735em, descent 0.265em). */
+.dropCap {
+  float: left;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "opsz" 48;
+  font-size: 3.053em;
+  line-height: 0.9;
+  margin: 0.06em 0.2em 0 0.045em;
+  color: var(--color-ink);
+  text-indent: 0;
+}
+
+.signoff {
+  margin-top: 1.4rem;
+  text-align: right;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "opsz" 20;
+  font-size: clamp(1.45rem, 3.4vw, 1.75rem);
+  line-height: 1.2;
+  color: var(--color-ink);
+}
+
+/* ── The last bar ──────────────────────────────────────────── */
+
+.ending {
+  position: relative;
+  margin: clamp(4.5rem, 14vw, 7rem) 0 0;
+  container-type: inline-size;
+  /* One staff space = 2% of the column, between 8 and 11px: exactly
+     spaceFor() in ending.ts. Resolved on each child that uses it. */
+  --space: clamp(8px, 2cqw, 11px);
+  /* how a sounded note cools from vermillion back to ink as it dies away */
+  --cool: cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+/* the drawing is a fixed number of spaces tall */
+.system {
+  display: block;
+  width: 100%;
+  height: calc(var(--h-per-space, 21.6) * var(--space));
+  overflow: visible;
+  color: var(--color-ink);
+}
+
+.staffLine {
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-ink) 78%, var(--color-paper));
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset var(--dur-draw) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 34ms);
+}
+
+.drawn .staffLine {
+  stroke-dashoffset: 0;
+}
+
+/* the diminuendo: drawn out to nothing, for exactly as long as the chord
+   takes to die away when it is heard */
+.hairpinLine {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+}
+
+.drawn .hairpinLine {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--hairpin-for, 1100ms) var(--hairpin-ease, var(--ease-out))
+    var(--hairpin-at, 520ms);
+}
+
+.barNumber {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "opsz" 14;
+  fill: var(--color-graphite);
+}
+
+/* everything else is printed in as the lines pass it */
+.ink {
+  opacity: 0;
+  transition: opacity var(--dur-reveal) var(--ease-out);
+  transition-delay: var(--at, 0ms);
+}
+
+.drawn .ink {
+  opacity: 1;
+}
+
+.chord {
+  --at: var(--chord-at, 300ms);
+}
+
+.dynamic {
+  --at: var(--dynamic-at, 420ms);
+}
+
+.fermata {
+  transform: translateY(-3px);
+  transition:
+    opacity var(--dur-reveal) var(--ease-out),
+    transform var(--dur-reveal) var(--ease-out);
+  transition-delay: var(--at, 0ms);
+}
+
+.drawn .fermata {
+  transform: none;
+}
+
+/* The chord. In silence it is printed with the rest, in ink. When it is
+   heard, each note is printed as it is struck, in vermillion (the colour of
+   anything sounding), and cools to ink over as long as it rings. */
+.head,
+.stem {
+  opacity: 0;
+  color: var(--color-vermillion);
+}
+
+.drawn .head,
+.drawn .stem {
+  opacity: 1;
+  color: var(--color-ink);
+}
+
+.drawn.sounding .chord {
+  transition: none;
+}
+
+.drawn.sounding .head,
+.drawn.sounding .stem {
+  transition:
+    opacity 90ms linear var(--on, 0ms),
+    color var(--ring, 1700ms) var(--cool) var(--on, 0ms);
+}
+
+/* a chord's stem grows up through a rolled chord with the roll's tip */
+.stem {
+  clip-path: inset(var(--grow, 0%) 0 0 0);
+}
+
+.drawn .stem {
+  clip-path: inset(0);
+}
+
+.drawn.sounding .stem {
+  transition:
+    opacity 90ms linear var(--on, 0ms),
+    clip-path var(--grow-for, 0ms) linear var(--on, 0ms),
+    color var(--ring, 1700ms) var(--cool) var(--on, 0ms);
+}
+
+/* The roll's wavy line: inked from the bottom up, its tip passing each note
+   as that note sounds, then cooling to ink once the roll is done. */
+.arp {
+  clip-path: inset(100% 0 0 0);
+  color: var(--color-vermillion);
+}
+
+.drawn .arp {
+  clip-path: inset(0);
+  color: var(--color-ink);
+}
+
+.drawn.sounding .arp {
+  transition:
+    clip-path var(--roll-for, 400ms) linear var(--roll-at, 0ms),
+    color 1400ms var(--cool) var(--roll-end, 400ms);
+}
+
+/* Fine. — hung under the barline, its full stop on the barline's edge;
+   when the chord is heard, it waits for the silence after it */
+.fine {
+  margin: 0;
+  margin-right: -0.065em;
+  text-align: right;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "opsz" 96;
+  font-size: clamp(3.4rem, 15vw, 6rem);
+  line-height: 1;
+  letter-spacing: -0.012em;
+  color: var(--color-ink);
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  transition:
+    opacity var(--dur-draw) var(--ease-out) var(--fine-at, 1250ms),
+    transform var(--dur-draw) var(--ease-out) var(--fine-at, 1250ms);
+}
+
+.drawn .fine {
+  opacity: 1;
+  transform: none;
+}
+
+.fineNote {
+  margin: 1.1rem 0 0 auto;
+  max-width: 22rem;
+  text-align: right;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.96rem;
+  line-height: 1.55;
+  color: var(--color-ink-soft);
+  text-wrap: pretty;
+  opacity: 0;
+  transition: opacity var(--dur-draw) var(--ease-out) var(--note-at, 1700ms);
+}
+
+.drawn .fineNote {
+  opacity: 1;
+}
+
+.verse {
+  display: block;
+}
+
+/* the word itself, roman inside the italic */
+.term {
+  font-style: normal;
+  letter-spacing: 0.01em;
+}
+
+/* ── Da capo ───────────────────────────────────────────────── */
+
+/* the da capo arrives last, once the ending has been printed, and can't be
+   touched until it can be seen */
+.after {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.drawn .after {
+  opacity: 1;
+  pointer-events: auto;
+  transition:
+    opacity var(--dur-reveal) var(--ease-out) var(--after-at, 2100ms),
+    pointer-events 0s linear var(--after-at, 2100ms);
+  transition-behavior: allow-discrete;
+}
+
+/* A keyboard can reach the da capo before the ending has finished printing:
+   finish it at once (dropping the transition cancels any delayed fade still
+   pending), rather than show a button under an empty gap. */
+.ending:focus-within .fine,
+.ending:focus-within .fineNote,
+.ending:focus-within .after {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  transition: none;
+}
+
+.daCapo svg {
+  flex: none;
+}
+
+/* ── Colophon: the engraver's imprint at the foot of the last page ── */
+
+.colophon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  margin-top: clamp(5.5rem, 16vw, 9rem);
+  padding-bottom: max(2.75rem, calc(env(safe-area-inset-bottom) + 1.5rem));
+  text-align: center;
+}
+
+.colophonRule {
+  width: 48px;
+  height: 1px;
+  background: var(--color-rule);
+}
+
+/* ink-soft, not graphite: small text has to read (AA); the faces already
+   stand apart, each set in itself */
+.colophon p {
+  max-width: 22rem;
+  text-wrap: balance;
+  color: var(--color-ink-soft);
+}
+
+.face {
+  letter-spacing: 0;
+  color: var(--color-ink-soft);
+}
+
+.faceBodoni {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.12em;
+}
+
+.faceNewsreader {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.1em;
+}
+
+.faceMono {
+  font-family: var(--font-mono);
+}
+
+/* ── Reduced motion: fades only ────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .staffLine,
+  .hairpinLine {
+    stroke-dashoffset: 0;
+    opacity: 0;
+    transition: opacity var(--dur-ui) linear;
+  }
+
+  .drawn .staffLine,
+  .drawn .hairpinLine {
+    opacity: 1;
+    transition: opacity var(--dur-ui) linear;
+  }
+
+  .ink,
+  .fermata {
+    transform: none;
+    transition: opacity var(--dur-ui) linear;
+    transition-delay: 0ms;
+  }
+
+  /* the roll isn't wiped in, nor the stem grown: they are simply there,
+     vermillion while they sound */
+  .arp,
+  .drawn .arp,
+  .stem,
+  .drawn .stem {
+    clip-path: none;
+  }
+
+  .drawn.sounding .arp {
+    transition: color 1400ms var(--cool) var(--roll-end, 400ms);
+  }
+
+  .fine {
+    transform: none;
+    transition: opacity var(--dur-ui) linear var(--fine-at, 200ms);
+  }
+
+  .fineNote {
+    transition: opacity var(--dur-ui) linear var(--note-at, 320ms);
+  }
+
+  .drawn .after {
+    transition:
+      opacity var(--dur-ui) linear var(--after-at, 440ms),
+      pointer-events 0s linear var(--after-at, 440ms);
+    transition-behavior: allow-discrete;
+  }
+}
