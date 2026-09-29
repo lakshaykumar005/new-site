@@ -15,6 +15,7 @@ import { musicBoxCopy } from "@/content/copy";
 import { useMediaQuery, useReducedMotion } from "@/lib/hooks";
 import Drawing from "./music-box/Drawing";
 import { armAudio, BoxEngine, type EngineEls } from "./music-box/engine";
+import PortraitPlate, { type PlateHandle } from "./music-box/PortraitPlate";
 import { figureHeight, GRIP, layout, type Geo } from "./music-box/geometry";
 import { MODEL } from "./music-box/model";
 import s from "./music-box/MusicBox.module.css";
@@ -103,6 +104,9 @@ function StopGlyph() {
   );
 }
 
+/** How often each row of the strip sounds in one pass of the song. */
+const HOLES_PER_ROW = MODEL.rows.map((_, r) => MODEL.holes.filter((h) => h.row === r).length);
+
 export default function MusicBox() {
   const wide = useMediaQuery(WIDE_QUERY);
   const wideGutter = useMediaQuery(WIDE_GUTTER_QUERY);
@@ -111,6 +115,7 @@ export default function MusicBox() {
 
   const figRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<BoxEngine | null>(null);
+  const plateRef = useRef<PlateHandle>(null);
   const [width, setWidth] = useState(0);
   const [auto, setAuto] = useState(false);
   const [passes, setPasses] = useState(0);
@@ -118,7 +123,13 @@ export default function MusicBox() {
 
   // one flywheel for the life of the section
   useLayoutEffect(() => {
-    const engine = new BoxEngine(MODEL, { onAuto: setAuto, onPasses: setPasses, onGrab: setGrabbing });
+    const engine = new BoxEngine(MODEL, {
+      onAuto: setAuto,
+      onPasses: setPasses,
+      onGrab: setGrabbing,
+      // every note cuts the next lines of her portrait into the plate above
+      onStrike: (h) => plateRef.current?.strike(h.row),
+    });
     engineRef.current = engine;
     return () => {
       engine.destroy();
@@ -246,12 +257,14 @@ export default function MusicBox() {
 
   return (
     <section id="music-box" className="section" aria-labelledby="music-box-title">
-      <div className="wrap">
-        <p className="t-kicker reveal">{musicBoxCopy.kicker}</p>
-        <h2 id="music-box-title" className="t-display reveal mt-4">
-          {musicBoxCopy.title}
-        </h2>
-        <p className="t-lede measure reveal mt-5">{musicBoxCopy.lede}</p>
+      <div className={`wrap ${s.stage}`}>
+        <div className={s.stageHead}>
+          <p className="t-kicker reveal">{musicBoxCopy.kicker}</p>
+          <h2 id="music-box-title" className="t-display reveal mt-4">
+            {musicBoxCopy.title}
+          </h2>
+          <p className="t-lede measure reveal mt-5">{musicBoxCopy.lede}</p>
+        </div>
 
         <div className={s.figureWrap} style={heights}>
           {/* (data-noswipe: pulling the paper sideways must never turn the page) */}
@@ -324,7 +337,13 @@ export default function MusicBox() {
           )}
         </div>
 
-        <ol className={s.key}>
+        {/* Fig. 2a: beside the box on a wide screen (and pinned in view),
+            straight under it on a phone — wherever she can watch it while she plays */}
+        <div className={`${s.stagePlate} reveal`}>
+          <PortraitPlate ref={plateRef} rows={MODEL.rows.length} holesPerRow={HOLES_PER_ROW} />
+        </div>
+
+        <ol className={`${s.key} ${s.stageKey}`}>
           {key.map((text, i) => {
             const [part, rest] = splitPart(text);
             return (

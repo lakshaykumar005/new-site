@@ -408,3 +408,42 @@
   font-weight: 500;
   fill: var(--color-ink);
 }
+
+/* ── The stage: heading, box, and Fig. 2a — the plate ────────
+   Stacked on phones and tablets (the plate straight under the box);
+   on a wide screen the plate takes a column of its own and stays
+   pinned in view while the box plays.                            */
+.stagePlate {
+  margin-top: clamp(1.5rem, 5vw, 3.5rem);
+}
+
+@media (min-width: 1200px) {
+  .stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    grid-template-areas:
+      "head   plate"
+      "figure plate"
+      "key    plate";
+    column-gap: clamp(3rem, 4vw, 4.5rem);
+    align-items: start;
+  }
+  .stageHead {
+    grid-area: head;
+  }
+  .stage > .figureWrap {
+    grid-area: figure;
+  }
+  .stageKey {
+    grid-area: key;
+    /* beside the plate the column is narrower: share it evenly */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 2rem;
+  }
+  .stagePlate {
+    grid-area: plate;
+    position: sticky;
+    top: 5.5rem;
+    margin-top: 0.4rem;
+  }
+}
