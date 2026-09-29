@@ -38,12 +38,17 @@ yy, xx = np.mgrid[0:H, 0:W]
 # expose for her face, not the dark dress
 face = (alpha > 0.5) & (yy < H * 0.5) & (xx > W * 0.2) & (xx < W * 0.8)
 lo, hi = np.percentile(lum[face], 3), np.percentile(lum[face], 99)
-dark = (1 - np.clip((lum - lo) / (hi - lo), 0, 1)) ** 1.85
+dark = (1 - np.clip((lum - lo) / (hi - lo), 0, 1)) ** 1.65
+# fill the bright gaps between her curls, so the hair reads as one mass
+hairy = np.clip((dark - 0.35) / 0.3, 0, 1) * (alpha > 0.5)
+closed = np.maximum(dark, blur(dark * hairy, 3.0) * 1.12)
+dark = np.clip(dark + (closed - dark) * blur(hairy, 4.0), 0, 1)
 oval = ((xx - W / 2) / (W * 0.485)) ** 2 + ((yy - H / 2) / (H * 0.485)) ** 2
-bg = np.clip((1 - oval) * 2.2, 0, 1) * 0.08
-tone = alpha * (0.14 + 0.86 * dark) + (1 - alpha) * bg
-fade = np.clip((0.985 - yy / H) / 0.16, 0, 1)
-tone = np.where(oval <= 1, tone * (alpha * fade + (1 - alpha)), 0)
+# every part of the plate is engraved: a ruled ground right to the frame,
+# and even the brightest skin keeps a hairline
+bg = 0.12 * np.clip((1 - oval) * 12, 0, 1)
+tone = alpha * (0.2 + 0.8 * dark) + (1 - alpha) * bg
+tone = np.where(oval <= 1, tone, 0)
 form = blur((1 - dark) * alpha, 6.5)
 rg = np.zeros((H, W, 3), dtype=np.uint8)
 rg[..., 0] = (np.clip(tone, 0, 1) * 255).round()
