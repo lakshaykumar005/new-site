@@ -193,3 +193,56 @@ export const chrome = {
   notFoundLede: "The page you wanted doesn’t exist. The music does.",
   notFoundHome: "Back to the beginning",
 };
+
+// ─────────────────────────────────────────────────────────────
+// ⚙️  EPIGRAPHS — your own lines go here.
+// Each slot prints a quotation between two sections, set like the
+// epigraph at the head of a movement. Leave a slot `null` to skip it.
+// `reply` is an optional answer printed beneath, in the site's voice.
+// ─────────────────────────────────────────────────────────────
+
+export interface Epigraph {
+  text: string;
+  /** who said it — printed small, after an em dash */
+  by?: string;
+  /** an optional answer beneath it */
+  reply?: string;
+}
+
+export const epigraphs: Record<
+  "cipher" | "musicBox" | "variations" | "plates" | "yourTurn" | "coda",
+  Epigraph | null
+> = {
+  cipher: {
+    text: "What’s in a name?",
+    by: "Shakespeare, Romeo and Juliet",
+    reply: `${capitalize(N)} notes, as it happens.`,
+  },
+  musicBox: {
+    text: "If music be the food of love, play on.",
+    by: "Shakespeare, Twelfth Night",
+  },
+  variations: null,
+  plates: null,
+  yourTurn: null,
+  coda: null,
+};
+
+export const frontispiece = {
+  kicker: "Frontispiece",
+  caption: "The theme, drawn from life.",
+  engravedNote: (lines: number) =>
+    `Engraved in ${lines} lines of ink from a photograph. Touch the plate to see it.`,
+  photoCaption: "The photograph it was drawn from.",
+  photoNote: "Touch it again for the engraving.",
+  toggleLabel: "Show the photograph the engraving was made from",
+  toggleBackLabel: "Show the engraving again",
+};
+
+export const platesCopy = {
+  kicker: "Plates",
+  title: "Studies from life",
+  lede: "Every good score comes with a few plates. These are printed in ink — touch one and the colour comes back.",
+  touchHint: "Touch a plate",
+  pointerHint: "Hover a plate",
+};
