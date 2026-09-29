@@ -77,6 +77,8 @@ export interface EngineEls {
 export interface EngineHooks {
   onAuto: (on: boolean) => void;
   onPasses: (n: number) => void;
+  /** a hole has just crossed the comb (its note is sounding) */
+  onStrike?: (h: Hole) => void;
   /** a hand has taken hold of the handle or the paper (or let go) */
   onGrab?: (on: boolean) => void;
 }
@@ -535,6 +537,7 @@ export class BoxEngine {
   private sound(h: Hole, at: number, pluck: boolean) {
     const ev = h.ev;
     if (pluck) musicBox.pluck(ev.midi, { velocity: ev.velocity, voice: ev.voice });
+    this.hooks.onStrike?.(h);
     const els = this.els;
     const geo = this.geo;
     if (!els || !geo) return;
