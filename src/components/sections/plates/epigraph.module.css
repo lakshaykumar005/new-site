@@ -57,6 +57,20 @@
   text-wrap: balance;
 }
 
+.text p {
+  margin: 0;
+}
+
+.text p + p {
+  margin-top: 0.6em;
+}
+
+/* a passage rather than a line: smaller, so it reads as prose */
+.long .text {
+  font-size: clamp(1.22rem, 3.6vw, 1.5rem);
+  line-height: 1.36;
+}
+
 .by {
   margin-top: 1.15rem;
   margin-right: -0.16em; /* the tracking after the last letter */

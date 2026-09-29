@@ -28,7 +28,7 @@
 
 .title {
   margin-top: 1rem;
-  /* break at the phrase ("Same nine notes, / six moods"), not inside it */
+  /* break at the phrase ("Six moods, / all of them you"), not inside it */
   text-wrap: pretty;
 }
 

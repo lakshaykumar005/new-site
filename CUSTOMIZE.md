@@ -16,6 +16,8 @@ Ten minutes, four files, zero component edits.
     (`cipher`, `musicBox`, `variations`, `plates`, `yourTurn`, `coda`).
     Each is `{ text, by?, reply? }` — `by` is printed small after an em dash,
     `reply` is an answer beneath it. `null` leaves the page without one.
+  - `text` can be a list of lines, each set on its own line; a long
+    quotation is set smaller automatically, as a passage.
   - Two are filled in to start (Shakespeare); replace them freely.
 
 - [ ] **3. The words her portrait is written in** — `copy.ts` → `frontispiece`

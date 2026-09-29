@@ -19,14 +19,36 @@
 
 @media (min-width: 1100px) {
   .spread {
-    grid-template-columns: minmax(0, 27rem) minmax(0, 1fr);
-    column-gap: clamp(3rem, 6vw, 6.5rem);
-    align-items: start;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: clamp(3rem, 5vw, 5rem);
+    align-items: center;
   }
 }
 
+.prose > p {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.45rem, 4.2vw, 1.8rem);
+  line-height: 1.34;
+}
+
 .prose > p + p {
-  margin-top: 1.05em;
+  margin-top: 0.7em;
+}
+
+/* set large beside the plate, so the words fill the height it takes */
+@media (min-width: 1100px) {
+  .prose {
+    max-width: 38rem;
+  }
+  .prose > p {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.95rem, 2.55vw, 2.45rem);
+    line-height: 1.3;
+  }
 }
 
 /* a phrase that reads as one thing ("Opus 1", "A, B, E, G, G") */

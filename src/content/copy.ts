@@ -43,40 +43,40 @@ export const titlePage = {
   eyebrow: "Theme & Variations",
   on: "on the name",
   opus: "Op. 1",
-  scoring: "Arranged for music box",
-  credits: [`Composed by whoever named you`, `Transcribed by ${FROM_NAME}`],
+  scoring: "For music box, and you",
+  credits: [`Composed by whoever named you`, `Transcribed, fondly, by ${FROM_NAME}`],
   play: "Hear your name",
-  soundHint: "Sound on, if you can",
-  after: ["That was your name.", "Every letter, one note. Turn the page, and I’ll show you the trick."],
-  again: "Once more",
+  soundHint: "Sound on — you sound even better out loud",
+  after: ["That was your name.", "Every letter, one note. It suits you. Turn the page — I wrote your portrait too."],
+  again: "Once more, for me",
   mutedNote: "Sound is off — the notes still move. Tap the speaker, top right, to hear them.",
-  welcomeBack: "Welcome back. It’s still in tune.",
+  welcomeBack: "You came back. I was hoping you would.",
 };
 
 export const cipher = {
   kicker: "Fig. 1 — The cipher",
-  title: "An old composers’ trick",
+  title: "Your name is a tune",
   paragraphs: [
-    "Robert Schumann’s very first published piece — his Opus 1 — was a set of variations on a name: A, B, E, G, G. Bach tucked his own name into a fugue. Ravel wrote a minuet on Haydn’s. Composers have been hiding people inside melodies for a long time.",
-    "The rule fits on a napkin. The first seven letters of the alphabet are already notes, A to G. After G you simply start again at A — like a clock with only seven hours.",
+    "You are beautiful, giving, gentle, idiotically and deliciously feminine, wonderfully intelligent and wonderfully silly as well.",
+    "I want to listen to you and watch you, your beautiful voice and your beauty, to argue with you and to laugh with you, to show things and share things with you, and to explore your magnificent mind.",
   ],
-  tableCaption: "Tap any letter to hear it.",
+  tableCaption: "Tap any letter to hear it. The ones in your name sound best.",
   columnsLabel: "becomes",
   derivationLabel: "Your name, letter by letter",
-  result: `${capitalize(N)} letters, ${N} notes. It begins on ${NAME_FACTS.first}, wanders a little, and ends on ${NAME_FACTS.last} — the note it finally rests on. Musicians call that coming home.`,
+  result: `${capitalize(N)} letters, ${N} notes. It begins on ${NAME_FACTS.first}, wanders a little, and ends on ${NAME_FACTS.last} — the note it finally rests on. Musicians call that coming home. I think I know the feeling.`,
   kicker2: "Which means I didn’t compose anything.",
   closing:
-    "You’ve been carrying this melody around since the day you got your name. I only wrote it down.",
+    "You’ve been carrying this melody around since the day you got your name. I only wrote it down — and I haven’t stopped humming it since.",
 };
 
 export const musicBoxCopy = {
   kicker: "Fig. 2 — The mechanism",
-  title: "Turn the handle",
-  lede: "It plays at exactly the speed of your hand. Slow is lovely. Backwards works too — some songs are good from either end.",
+  title: "Go on, turn it",
+  lede: "It only plays while you turn it, as fast or as slow as your hand goes. Backwards works too. Take your time with it. I did.",
   callouts: {
     handle: "Handle. Clockwise plays it forward.",
     comb: (teeth: number) => `Comb. ${capitalize(numberWord(teeth))} tuned steel teeth.`,
-    strip: "Paper strip, punched with your name — and a little harmony underneath, for support.",
+    strip: "Paper strip, punched with your name, and a little harmony underneath so it never has to play alone.",
   },
   hintTouch: "Turn the handle in circles, or pull the paper.",
   hintPointer: "Drag the handle round, or pull the paper. Arrow keys work too.",
@@ -84,9 +84,9 @@ export const musicBoxCopy = {
   stop: "Stop",
   plate: {
     kicker: "Fig. 2a — The plate",
-    idle: "A blank plate. Every note the box plays cuts a line into it.",
-    progress: (cut: number, total: number) => `${cut} of ${total} lines cut. Keep turning.`,
-    done: "Turns out the song knew what you look like.",
+    idle: "A blank plate. Every note you play cuts a line into it. Keep going and see who shows up.",
+    progress: (cut: number, total: number) => `${cut} of ${total} lines cut. Don’t stop now.`,
+    done: "Turns out the song knew your face by heart. Can’t say I blame it.",
     clear: "Clear the plate",
     alt: `A portrait of ${HER_NAME}, engraved line by line by the music`,
   },
@@ -94,7 +94,7 @@ export const musicBoxCopy = {
     2: "Twice. It gets better the second time.",
     4: "Four times. I’m choosing to read into that.",
     8: "Eight. Now I’m definitely reading into it.",
-    16: "Sixteen. You could hum it by now. (Please do.)",
+    16: "Sixteen. You could hum it by now. Hum it to me sometime?",
   } as Record<number, string>,
 };
 
@@ -106,8 +106,8 @@ export interface VariationCopy {
 
 export const variationsCopy = {
   kicker: "Fig. 3 — Variations",
-  title: `Same ${N} notes, six moods`,
-  lede: "A theme isn’t finished until you’ve tried it a few different ways. These are the ways I tried.",
+  title: "Six moods, all\u00a0of\u00a0them\u00a0you",
+  lede: "I kept playing your name in different moods to see if I’d get tired of it. I didn’t. These are the six I kept.",
   todaysPick: "Today’s pick",
   play: "Play",
   stop: "Stop",
@@ -120,33 +120,33 @@ export const variationsCopy = {
   items: {
     theme: {
       mark: "Andante",
-      title: "The theme",
-      line: "Exactly as spelled. No edits needed — there rarely are.",
+      title: "Just you",
+      line: "Exactly as spelled. I didn’t change a thing. It didn’t need it.",
     },
     retrograde: {
       mark: "Cancrizans",
-      title: "Read from the end",
-      line: "Your name, backwards — crab-wise, the old composers called it. It still sounds like you, which feels about right.",
+      title: "Back to front",
+      line: "Your name from the last letter to the first. It still sounds like you. I wasn’t surprised.",
     },
     inversion: {
       mark: "Per moto contrario",
       title: "Upside down",
-      line: "Every step up becomes a step down. Turned completely over and still lovely — a little unfair, honestly.",
+      line: "Every step up becomes a step down. Flipped completely over and it’s still pretty, which is a bit unfair on the rest of us.",
     },
     waltz: {
       mark: "Tempo di valse",
-      title: "If it were asked to dance",
-      line: "In three, with a bass that goes oom-pah-pah. It said yes immediately.",
+      title: "If I asked you to dance",
+      line: "In three, with a bass going oom-pah-pah. Your name said yes straight away. Your turn.",
     },
     lullaby: {
       mark: "Adagio",
       title: "The 2 a.m. version",
-      line: "Half the speed, an octave lower. For when everything should be quieter than it is.",
+      line: "Slower and lower. For the hour when you should be asleep and I’m still thinking about you.",
     },
     allegro: {
       mark: "Allegro",
       title: "Walking into a room",
-      line: "Twice as fast, a little bright. The version that plays when you walk in somewhere. Not that I keep track.",
+      line: "Twice as fast and a little bright. This is what my head plays when you walk in. Not that I keep track.",
     },
   } satisfies Record<VariationId, VariationCopy>,
 };
@@ -216,7 +216,8 @@ export const chrome = {
 // ─────────────────────────────────────────────────────────────
 
 export interface Epigraph {
-  text: string;
+  /** one quotation, or its lines in order — each set on a line of its own */
+  text: string | readonly string[];
   /** who said it — printed small, after an em dash */
   by?: string;
   /** an optional answer beneath it */
@@ -230,27 +231,31 @@ export const epigraphs: Record<
   cipher: {
     text: "What’s in a name?",
     by: "Shakespeare, Romeo and Juliet",
-    reply: `${capitalize(N)} notes, as it happens.`,
+    reply: `${capitalize(N)} notes, as it happens. No other name would sound as sweet.`,
   },
   musicBox: {
     text: "If music be the food of love, play on.",
     by: "Shakespeare, Twelfth Night",
   },
   variations: null,
-  plates: null,
+  plates: {
+    text: "A thing of beauty is a joy for ever.",
+    by: "John Keats, Endymion",
+    reply: "He hadn’t even met you.",
+  },
   yourTurn: null,
   coda: null,
 };
 
 export const frontispiece = {
   kicker: "Frontispiece",
-  title: "Written, not drawn",
+  title: "Every line is about you",
   paragraphs: [
-    "Old scores open with a portrait facing the title page, cut into copper by an engraver with a very steady hand. Yours is cut in words.",
-    `Every line of ink in it is a line of text — your name, the ${N} notes it makes, and a few sentences I wrote while it was being made. From arm’s length they’re only shading. Up close, they’re for you.`,
+    "Old scores open with a portrait facing the title page, cut into copper by someone with a very steady hand. Mine aren’t that steady when you’re around, so I cut yours in words.",
+    `Every line of ink in it is a line of text — your name, the ${N} notes it makes, and things I’ve never quite said out loud. From across the room it looks like shading. Up close, every line says something about you — which, now that I think about it, is exactly how you work too.`,
   ],
-  lead: "Pick up the glass and read. Start with the smile — it took the most words.",
-  caption: "The theme, drawn from life.",
+  lead: "Pick up the glass and come closer. Start with the smile — I couldn’t stop writing there.",
+  caption: "The theme, drawn from life. The original is still better.",
   engravedNote: (lines: number, words?: number) =>
     typeof words === "number" && words > 0
       ? `Engraved in ${lines} lines of ink — ${words.toLocaleString("en")} words — from a photograph.`
@@ -266,36 +271,44 @@ export const frontispiece = {
   microText: [
     HER_NAME,
     NAME_FACTS.notes.map((n) => n.note).join(" "),
+    "Beautiful, giving, gentle",
+    "Idiotically and deliciously feminine",
+    "Wonderfully intelligent and wonderfully silly as well",
     "This portrait is not drawn. It is written",
     "Every line of ink is a line of words, and every word is about you",
     "If you are reading this, you found the glass. Most people never look this closely",
     `Composed by whoever named you. Transcribed, very carefully, by ${FROM_NAME}`,
     `${capitalize(N)} letters, ${N} notes, and a smile that took more lines than anything else here`,
+    "I want to listen to you and watch you",
+    "Your beautiful voice and your beauty",
+    "To argue with you and to laugh with you",
+    "To show things and share things with you",
+    "And to explore your magnificent mind",
     "Turn the page when you are ready. The music is waiting",
   ],
   // ⚙️ Sentences set at a particular place in the portrait (u = across,
   // v = down, 0–1). The glass starts over the first one.
   hidden: [
-    { text: "That smile took more words than anything else on this page", u: 0.41, v: 0.458 },
-    { text: "Look who is looking back", u: 0.42, v: 0.335 },
-    { text: "I really like talking to you", u: 0.73, v: 0.6 },
+    { text: "This smile is the reason I made all of this", u: 0.41, v: 0.458 },
+    { text: "You caught me staring", u: 0.42, v: 0.335 },
+    { text: "Talking to you is my favourite part", u: 0.73, v: 0.6 },
   ],
 };
 
 export const platesCopy = {
   kicker: "Plates",
-  title: "Studies from life",
-  lede: "Every good score comes with a few plates. These are printed in ink — touch one and the colour comes back.",
-  touchHint: "Touch a plate",
-  pointerHint: "Hover a plate",
+  title: "The evidence",
+  lede: "In case anyone ever asks why I made all this, here are four reasons. They’re printed in ink. Touch one and the colour comes back, which is roughly what you do to my day.",
+  touchHint: "Touch a print to bring the colour back",
+  pointerHint: "Hover over a print to bring the colour back",
   // ── the print room ──
   /** under the lede: how the plates arrive */
-  pressHint: "Each plate is inked and pulled as you reach it.",
+  pressHint: "Each one prints as you reach it. No rush.",
   /** the state of a plate, printed in its margin */
-  unprinted: "Not yet printed",
+  unprinted: "Waiting for you",
   printing: "Printing…",
   impression: (n: number) =>
-    n === 1 ? "First impression" : n === 2 ? "Second impression" : n === 3 ? "Third impression" : `Impression ${n}`,
+    n === 1 ? "First impression" : n === 2 ? "Second look" : n === 3 ? "Third look. Understandable" : `Look ${n}. I get it`,
   printAgain: "Print again",
   printAgainLabel: (mark: string) => `Print the plate marked ${mark} again`,
   /** announced when a plate has been pulled */

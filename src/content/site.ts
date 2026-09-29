@@ -22,4 +22,4 @@ export const REPLY_WHATSAPP: string = "";
 /** Shown in the browser tab and link previews. */
 export const SITE_TITLE = "Variations on a Name";
 
-export const SITE_DESCRIPTION = "A small piece of music, transcribed from a name.";
+export const SITE_DESCRIPTION = "A little piece of music that was hiding in your name all along.";

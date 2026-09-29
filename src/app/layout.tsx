@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bodoni_Moda, DM_Mono, Newsreader } from "next/font/google";
+import { Bodoni_Moda, Cormorant_Garamond, DM_Mono, Newsreader } from "next/font/google";
 import Contents from "@/components/chrome/Contents";
 import PageGestures from "@/components/chrome/PageGestures";
 import RevealObserver from "@/components/chrome/RevealObserver";
@@ -12,6 +12,13 @@ const bodoni = Bodoni_Moda({
   style: ["normal", "italic"],
   axes: ["opsz"],
   variable: "--font-bodoni",
+  display: "swap",
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  variable: "--font-cormorant",
   display: "swap",
 });
 
@@ -63,7 +70,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" className={`${bodoni.variable} ${newsreader.variable} ${dmMono.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${bodoni.variable} ${cormorant.variable} ${newsreader.variable} ${dmMono.variable}`}>
       <body>
         <Contents />
         <SoundToggle />

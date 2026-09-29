@@ -2,6 +2,9 @@ import s from "@/components/sections/plates/epigraph.module.css";
 import { epigraphs } from "@/content/copy";
 import Divider from "./Divider";
 
+/** Past this many characters a quotation is set smaller, as a passage. */
+const LONG = 90;
+
 /**
  * The epigraph for `slot`, set at the head of the next movement:
  * centred between two hairlines, the quotation in italic, its source
@@ -18,12 +21,16 @@ export default function Epigraph({
 }) {
   const q = epigraphs[slot];
   if (!q) return atHead ? null : <Divider />;
+  const lines = typeof q.text === "string" ? [q.text] : q.text;
+  const long = lines.join(" ").length > LONG;
   return (
     <div className={`wrap ${s.epigraph} ${atHead ? s.atHead : ""}`}>
-      <div className={`reveal ${s.inner}`}>
+      <div className={`reveal ${s.inner} ${long ? s.long : ""}`}>
         <figure className={s.figure}>
           <blockquote className={s.text}>
-            <p>{q.text}</p>
+            {lines.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
           </blockquote>
           {q.by ? (
             <figcaption className={s.by}>
