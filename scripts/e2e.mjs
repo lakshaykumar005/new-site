@@ -137,7 +137,8 @@ async function run(tag, contextOptions) {
 
   // ── 5. variations ───────────────────────────────────────
   await open(page, "/variations");
-  check((await page.locator("#variations svg.score-line").count()) === 6, `${tag} variations: six engraved systems`);
+  const systems = await page.locator("#variations svg.score-line").count();
+  check(systems >= 6, `${tag} variations: six engraved systems, and hers (${systems})`);
   const playButtons = page.locator("#variations").getByRole("button", { name: /play/i });
   if ((await playButtons.count()) > 0) {
     await playButtons.first().scrollIntoViewIfNeeded();
