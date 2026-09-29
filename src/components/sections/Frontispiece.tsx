@@ -180,7 +180,8 @@ export default function Frontispiece() {
                   family={family}
                   W={size.W}
                   H={size.H}
-                  start={{ u: copy.hidden[0].u + 0.08, v: copy.hidden[0].v }}
+                  // resting on her shoulder, so her face is the first thing seen
+                  start={{ u: 0.7, v: 0.76 }}
                   label={copy.glassLabel}
                 />
               )}
