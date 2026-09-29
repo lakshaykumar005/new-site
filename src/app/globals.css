@@ -351,3 +351,72 @@ button {
     opacity: 0;
   }
 }
+
+/* ── Turning pages ────────────────────────────────────────────
+   Forward: the page slides away to the left and the next one
+   arrives from the right. Back: the other way. The running head
+   and the speaker stay where they are.                          */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(.nav-forward) {
+  --slide-offset: -76px;
+  animation:
+    170ms var(--ease-out) both vt-fade reverse,
+    480ms var(--ease-in-out) both vt-slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide-offset: 76px;
+  animation:
+    280ms var(--ease-out) 130ms both vt-fade,
+    480ms var(--ease-in-out) both vt-slide;
+}
+::view-transition-old(.nav-back) {
+  --slide-offset: 76px;
+  animation:
+    170ms var(--ease-out) both vt-fade reverse,
+    480ms var(--ease-in-out) both vt-slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide-offset: -76px;
+  animation:
+    280ms var(--ease-out) 130ms both vt-fade,
+    480ms var(--ease-in-out) both vt-slide;
+}
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes vt-slide {
+  from {
+    translate: var(--slide-offset);
+  }
+  to {
+    translate: 0;
+  }
+}
+::view-transition-group(sound-toggle),
+::view-transition-group(running-head) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(sound-toggle),
+::view-transition-old(running-head) {
+  display: none;
+}
+::view-transition-new(sound-toggle),
+::view-transition-new(running-head) {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
